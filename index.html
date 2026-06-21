@@ -1135,35 +1135,47 @@ let state = {
 };
 
 async function loadState() {
-  const [stateSnap, decsSnap] = await Promise.all([
-    getDoc(STATE_REF).catch(() => null),
-    getDoc(DECISIONS_REF).catch(() => null),
-  ]);
-  if (stateSnap?.exists()) {
-    const d = stateSnap.data();
-    if (d.picks) state.picks = d.picks;
-    if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
-  }
-  state.decisions = (decsSnap?.exists() && Array.isArray(decsSnap.data().items))
-    ? decsSnap.data().items
-    : DEFAULT_DECISIONS.slice();
-
-  onSnapshot(STATE_REF, (snap) => {
-    if (!snap.exists()) return;
-    const d = snap.data();
-    state.picks = d.picks || {};
-    if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+  try {
+    const [stateSnap, decsSnap] = await Promise.all([
+      getDoc(STATE_REF).catch(() => null),
+      getDoc(DECISIONS_REF).catch(() => null),
+    ]);
+    if (stateSnap?.exists()) {
+      const d = stateSnap.data();
+      if (d.picks) state.picks = d.picks;
+      if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+    }
+    state.decisions = (decsSnap?.exists() && Array.isArray(decsSnap.data().items))
+      ? decsSnap.data().items
+      : DEFAULT_DECISIONS.slice();
     renderExperiences();
-    renderMyTrip();
-    renderReservations();
+    renderDecisions();
     updatePickCount();
-  });
+    const imgSel = document.getElementById('imageSource');
+    if (imgSel) imgSel.value = state.imageSource;
+  } catch (e) {
+    console.warn('Firebase initial load failed:', e);
+  }
 
-  onSnapshot(DECISIONS_REF, (snap) => {
-    if (!snap.exists()) return;
-    const items = snap.data().items;
-    if (Array.isArray(items)) { state.decisions = items; renderDecisions(); }
-  });
+  try {
+    onSnapshot(STATE_REF, (snap) => {
+      if (!snap.exists()) return;
+      const d = snap.data();
+      state.picks = d.picks || {};
+      if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+      renderExperiences();
+      renderMyTrip();
+      renderReservations();
+      updatePickCount();
+    });
+    onSnapshot(DECISIONS_REF, (snap) => {
+      if (!snap.exists()) return;
+      const items = snap.data().items;
+      if (Array.isArray(items)) { state.decisions = items; renderDecisions(); }
+    });
+  } catch (e) {
+    console.warn('Firebase listeners failed:', e);
+  }
 }
 
 function saveState() {
@@ -1702,8 +1714,8 @@ document.getElementById('newDecisionBody').addEventListener('keydown', (e) => {
 
 /* ----------------------------- INIT ----------------------------- */
 
-async function init() {
-  await loadState();
+function init() {
+  // Render immediately from default state — don't wait for Firebase
   populateAreaSelects();
   syncFilterUI();
   setupImageObserver();
@@ -1712,6 +1724,8 @@ async function init() {
   renderExperiences();
   renderDecisions();
   updatePickCount();
+  // Firebase loads in background and re-renders when data arrives
+  loadState();
 }
 init();
 </script>
