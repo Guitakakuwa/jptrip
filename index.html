@@ -482,7 +482,23 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+const FB_CONFIG = {
+  apiKey: "AIzaSyDGCCufIu3F3zup5UZSQ9KrzYYkPuUmxAo",
+  authDomain: "jpplan.firebaseapp.com",
+  projectId: "jpplan",
+  storageBucket: "jpplan.firebasestorage.app",
+  messagingSenderId: "634500712555",
+  appId: "1:634500712555:web:d816dc49af9aa82233892e"
+};
+const fbApp = initializeApp(FB_CONFIG);
+const db = getFirestore(fbApp);
+const STATE_REF = doc(db, 'shared', 'state');
+const DECISIONS_REF = doc(db, 'shared', 'decisions');
+
 /* ----------------------------- DATA ----------------------------- */
 
 const AREAS = [
@@ -1108,10 +1124,9 @@ function observeCards(root) {
 
 /* ----------------------------- STATE ----------------------------- */
 
-const STORAGE_KEY = 'jptrip-picks-v1';
-const IMGSRC_KEY = 'jptrip-imgsrc';
 let state = {
   picks: {},
+  decisions: [],
   filters: { area: 'all', effort: 'all', exh: 'all', reserve: 'all', search: '' },
   foodFilters: { area: 'all', meal: 'all' },
   dragId: null,
@@ -1119,21 +1134,45 @@ let state = {
   imageSource: 'wikipedia',
 };
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) state.picks = JSON.parse(raw);
-  } catch (e) { console.warn('Failed to load picks:', e); }
-  try {
-    const src = localStorage.getItem(IMGSRC_KEY);
-    if (src && IMAGE_SOURCES[src]) state.imageSource = src;
-  } catch (e) {}
+async function loadState() {
+  const [stateSnap, decsSnap] = await Promise.all([
+    getDoc(STATE_REF).catch(() => null),
+    getDoc(DECISIONS_REF).catch(() => null),
+  ]);
+  if (stateSnap?.exists()) {
+    const d = stateSnap.data();
+    if (d.picks) state.picks = d.picks;
+    if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+  }
+  state.decisions = (decsSnap?.exists() && Array.isArray(decsSnap.data().items))
+    ? decsSnap.data().items
+    : DEFAULT_DECISIONS.slice();
+
+  onSnapshot(STATE_REF, (snap) => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    state.picks = d.picks || {};
+    if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+    renderExperiences();
+    renderMyTrip();
+    renderReservations();
+    updatePickCount();
+  });
+
+  onSnapshot(DECISIONS_REF, (snap) => {
+    if (!snap.exists()) return;
+    const items = snap.data().items;
+    if (Array.isArray(items)) { state.decisions = items; renderDecisions(); }
+  });
 }
+
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.picks));
+  setDoc(STATE_REF, { picks: state.picks }, { merge: true })
+    .catch(e => console.warn('Save failed:', e));
 }
 function saveImageSource() {
-  try { localStorage.setItem(IMGSRC_KEY, state.imageSource); } catch (e) {}
+  setDoc(STATE_REF, { imageSource: state.imageSource }, { merge: true })
+    .catch(e => console.warn('Save failed:', e));
 }
 
 /* ----------------------------- RENDER ----------------------------- */
@@ -1334,15 +1373,10 @@ function renderReservations() {
   `).join('');
 }
 
-function getDecisions() {
-  try {
-    const raw = localStorage.getItem('jptrip-decisions-v1');
-    if (raw) return JSON.parse(raw);
-  } catch (e) {}
-  return DEFAULT_DECISIONS.slice();
-}
+function getDecisions() { return state.decisions; }
 function saveDecisions(arr) {
-  localStorage.setItem('jptrip-decisions-v1', JSON.stringify(arr));
+  state.decisions = arr;
+  setDoc(DECISIONS_REF, { items: arr }).catch(e => console.warn('Save failed:', e));
 }
 
 function renderDecisions() {
@@ -1668,14 +1702,18 @@ document.getElementById('newDecisionBody').addEventListener('keydown', (e) => {
 
 /* ----------------------------- INIT ----------------------------- */
 
-loadState();
-populateAreaSelects();
-syncFilterUI();
-setupImageObserver();
-const imgSelect = document.getElementById('imageSource');
-if (imgSelect) imgSelect.value = state.imageSource;
-renderExperiences();
-updatePickCount();
+async function init() {
+  await loadState();
+  populateAreaSelects();
+  syncFilterUI();
+  setupImageObserver();
+  const imgSelect = document.getElementById('imageSource');
+  if (imgSelect) imgSelect.value = state.imageSource;
+  renderExperiences();
+  renderDecisions();
+  updatePickCount();
+}
+init();
 </script>
 </body>
 </html>
