@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Japan Trip · Sep 12–27, 2026</title>
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --card: #ffffff;
+    --border: #e5e1d8;
+    --text: #1c1c1c;
+    --muted: #6b6b6b;
+    --accent: #b3121f;
+    --accent-soft: #faecee;
+    --chip: #f0ece4;
+    --chip-active: #1c1c1c;
+    --chip-active-text: #ffffff;
+    --low: #2f7a3c;
+    --med: #c87a14;
+    --high: #b3121f;
+    --vhigh: #6b0a13;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.04);
+    --sidebar-w: 230px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px; line-height: 1.5; }
+
+  /* App shell with sidebar */
+  .app { display: flex; min-height: 100vh; }
+  aside.sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--card); border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    padding: 22px 14px; display: flex; flex-direction: column;
+    overflow-y: auto; z-index: 100;
+  }
+  .sidebar-brand { padding: 0 8px 18px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .sidebar-brand strong { display: block; font-size: 16px; }
+  .sidebar-brand span { font-size: 11.5px; color: var(--muted); }
+  .sidenav { display: flex; flex-direction: column; gap: 2px; }
+  .sidenav button {
+    background: transparent; border: none; padding: 10px 12px;
+    cursor: pointer; font: inherit; color: var(--muted); border-radius: 8px;
+    display: flex; align-items: center; gap: 10px; text-align: left;
+    font-size: 14px; transition: background .15s, color .15s;
+  }
+  .sidenav button:hover { background: var(--chip); color: var(--text); }
+  .sidenav button.active { background: var(--chip-active); color: var(--chip-active-text); }
+  .sidenav button.active .navbadge { background: rgba(255,255,255,.18); color: #fff; }
+  .navicon { font-size: 16px; width: 18px; text-align: center; }
+  .navbadge {
+    margin-left: auto; background: var(--accent); color: #fff;
+    font-size: 11px; padding: 1px 8px; border-radius: 999px; min-width: 22px; text-align: center;
+  }
+  .navbadge:empty { display: none; }
+  .sidebar-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); }
+  .sidebar-footer p { font-size: 11px; color: var(--muted); margin: 4px 8px; line-height: 1.4; }
+
+  /* Mobile sidebar toggle */
+  .mobile-bar {
+    display: none; padding: 12px 16px; background: var(--card);
+    border-bottom: 1px solid var(--border); align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 90;
+  }
+  .menu-toggle { background: none; border: 1px solid var(--border); padding: 6px 10px;
+    border-radius: 7px; cursor: pointer; font: inherit; font-size: 18px; line-height: 1; }
+  .mobile-title { font-weight: 600; font-size: 15px; }
+  .sidebar-overlay { display: none; }
+
+  /* Main content */
+  main.content { flex: 1; margin-left: var(--sidebar-w); padding: 24px 28px; }
+  .page-title { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+  .page-subtitle { color: var(--muted); font-size: 13.5px; margin: 0 0 18px; }
+
+  /* Filters — compact row */
+  .filterbar {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .filterbar select {
+    appearance: none; -webkit-appearance: none;
+    border: 1px solid var(--border); background: var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center;
+    background-size: 10px; padding: 7px 28px 7px 12px;
+    border-radius: 8px; font: inherit; font-size: 13px; cursor: pointer;
+    color: var(--text); min-width: 110px;
+  }
+  .filterbar select:hover { border-color: var(--text); }
+  .filterbar select.has-value { background-color: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+  .filterbar input.search {
+    flex: 1; min-width: 180px; padding: 7px 12px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--bg); font: inherit; font-size: 13px;
+  }
+  .filterbar input.search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .filterbar .clear-link {
+    background: transparent; border: none; color: var(--accent); cursor: pointer;
+    font: inherit; font-size: 13px; padding: 6px 8px; text-decoration: underline;
+  }
+  .filterbar .clear-link[hidden] { display: none; }
+
+  /* Experience cards with image header */
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+  .card.picked { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .card-img {
+    position: relative; height: 140px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-img-emoji { font-size: 42px; opacity: .85; filter: drop-shadow(0 2px 4px rgba(0,0,0,.15)); }
+  .card-img img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    transition: opacity .3s ease;
+  }
+  .card-img[data-loaded="1"] .card-img-emoji { opacity: .35; }
+  .card-img-corner {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,.55); color: #fff; font-size: 11px;
+    padding: 3px 8px; border-radius: 6px; font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+  .card.picked .card-img::after {
+    content: '★ Picked'; position: absolute; top: 8px; right: 8px;
+    background: var(--accent); color: #fff; font-size: 11px; padding: 3px 8px;
+    border-radius: 6px; font-weight: 600;
+  }
+  .card-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .card-name { font-weight: 600; font-size: 15.5px; line-height: 1.3; }
+  .card-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge {
+    font-size: 11.5px; padding: 3px 8px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--chip); font-weight: 500;
+  }
+  .badge.effort-1, .badge.effort-2 { background: #eefae9; color: var(--low); border-color: #cce6c8; }
+  .badge.effort-3 { background: #fef4e1; color: var(--med); border-color: #f0dba6; }
+  .badge.effort-4 { background: #fde8e1; color: var(--high); border-color: #f3c3b3; }
+  .badge.effort-5 { background: #fde0e0; color: var(--vhigh); border-color: #f0a3a3; }
+  .badge.exh-Low { color: var(--low); }
+  .badge.exh-Med { color: var(--med); }
+  .badge.exh-High { color: var(--high); }
+  .badge.exh-Very { color: var(--vhigh); }
+  .badge.reserve { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .card-why { color: var(--muted); font-size: 13.5px; flex: 1; }
+  .card-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: auto; }
+  .btn {
+    padding: 7px 13px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--card); cursor: pointer; font: inherit; font-size: 13px;
+  }
+  .btn.primary { background: var(--text); color: #fff; border-color: var(--text); }
+  .btn.primary:hover { background: #000; }
+  .btn.danger { color: var(--accent); }
+  .btn:hover { border-color: var(--text); }
+
+  .section-title {
+    font-size: 13px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .06em; margin: 24px 0 10px; font-weight: 600;
+  }
+  .empty {
+    background: var(--card); border: 1px dashed var(--border); border-radius: 10px;
+    padding: 30px; text-align: center; color: var(--muted);
+  }
+
+  /* Food */
+  .food-grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  .food-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; box-shadow: var(--shadow);
+  }
+  .food-meal {
+    font-size: 11px; color: var(--accent); text-transform: uppercase;
+    letter-spacing: .06em; font-weight: 600; margin-bottom: 4px;
+  }
+  .food-name { font-weight: 600; font-size: 14.5px; }
+  .food-note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  /* Combos */
+  .combo-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px; box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .combo-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .combo-title { font-weight: 600; font-size: 17px; }
+  .combo-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .combo-list { margin: 12px 0 6px; padding-left: 20px; }
+  .combo-list li { margin: 4px 0; }
+  .combo-desc { color: var(--muted); font-style: italic; font-size: 13.5px; }
+
+  /* My Trip — kanban day board */
+  .stat-bar {
+    display: flex; gap: 14px; flex-wrap: wrap; background: var(--card);
+    padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border);
+    margin-bottom: 16px; box-shadow: var(--shadow); align-items: center;
+  }
+  .stat { font-size: 12.5px; color: var(--muted); }
+  .stat strong { font-size: 18px; display: block; color: var(--text); }
+  .day-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .day-block {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 12px 8px; box-shadow: var(--shadow); min-height: 130px;
+    display: flex; flex-direction: column;
+    transition: background .15s, border-color .15s;
+  }
+  .day-block.unassigned { border-style: dashed; background: var(--bg); grid-column: 1 / -1; }
+  .day-block.drag-over { background: var(--accent-soft); border-color: var(--accent); }
+  .day-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .day-label { font-weight: 600; font-size: 14px; }
+  .day-sub { font-size: 11.5px; color: var(--muted); }
+  .day-count { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .day-picks { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .day-block.unassigned .day-picks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .pick-chip {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; cursor: grab; user-select: none;
+    display: flex; align-items: center; gap: 10px;
+    transition: box-shadow .12s, transform .12s;
+  }
+  .pick-chip:hover { box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+  .pick-chip.dragging { opacity: .35; cursor: grabbing; }
+  .pick-chip-emoji { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+  .pick-chip-body { flex: 1; min-width: 0; }
+  .pick-chip-name { font-size: 13px; font-weight: 500; line-height: 1.25;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pick-chip-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .pick-chip-meta .reserve { color: var(--accent); font-weight: 500; }
+  .pick-chip-remove {
+    border: none; background: transparent; cursor: pointer; color: var(--muted);
+    font-size: 16px; padding: 2px 6px; border-radius: 4px;
+  }
+  .pick-chip-remove:hover { background: var(--accent-soft); color: var(--accent); }
+  .day-drop-hint {
+    color: var(--muted); font-size: 12px; font-style: italic;
+    padding: 8px; text-align: center; border: 1px dashed transparent; border-radius: 6px;
+  }
+  .day-block.drag-over .day-drop-hint { color: var(--accent); border-color: var(--accent); }
+
+  /* Reservations / Decisions */
+  .reservation-row, .decision-row {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px;
+    align-items: flex-start; box-shadow: var(--shadow);
+  }
+  .reservation-num, .decision-num {
+    background: var(--accent); color: #fff; min-width: 26px; height: 26px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 12.5px;
+  }
+  .reservation-body { flex: 1; }
+  .reservation-what { font-weight: 600; margin-bottom: 2px; }
+  .reservation-when { font-size: 12.5px; color: var(--accent); font-weight: 500; }
+  .reservation-note { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  details.decision-row { display: block; padding: 0; }
+  details summary {
+    list-style: none; cursor: pointer; padding: 12px 14px; display: flex;
+    gap: 12px; align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .decision-body { padding: 12px 14px; color: var(--muted); font-size: 13.5px; }
+  .decision-add {
+    display: flex; gap: 8px; flex-wrap: wrap; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    margin-bottom: 14px; box-shadow: var(--shadow);
+  }
+  .decision-add input {
+    border: 1px solid var(--border); background: var(--bg); padding: 7px 12px;
+    border-radius: 8px; font: inherit; font-size: 13.5px; flex: 1; min-width: 180px;
+  }
+  .decision-add input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .decision-delete {
+    border: none; background: transparent; cursor: pointer; color: var(--muted);
+    font-size: 16px; padding: 4px 10px; border-radius: 6px; margin-left: auto;
+  }
+  .decision-delete:hover { background: var(--accent-soft); color: var(--accent); }
+
+  .res-empty {
+    background: var(--card); border: 1px dashed var(--border); border-radius: 10px;
+    padding: 30px; text-align: center; color: var(--muted);
+  }
+
+  /* Mobile day picker modal (drag-drop fallback) */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+    z-index: 200; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 12px; padding: 18px; max-width: 380px;
+    width: 100%; max-height: 80vh; overflow-y: auto;
+  }
+  .modal h3 { margin: 0 0 12px; font-size: 16px; }
+  .modal-day-btn {
+    display: block; width: 100%; text-align: left; padding: 10px 12px;
+    border: 1px solid var(--border); background: var(--bg); border-radius: 8px;
+    margin-bottom: 6px; cursor: pointer; font: inherit;
+  }
+  .modal-day-btn:hover, .modal-day-btn.selected { background: var(--accent-soft); border-color: var(--accent); }
+
+  @media (max-width: 800px) {
+    aside.sidebar {
+      transform: translateX(-100%); transition: transform .2s ease;
+      width: 270px;
+    }
+    aside.sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.15); }
+    .sidebar-overlay { display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.4); z-index: 95; }
+    .sidebar-overlay.open { display: block; }
+    main.content { margin-left: 0; padding: 16px; }
+    .mobile-bar { display: flex; }
+    .page-title { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <strong>Japan Trip</strong>
+    <span>Sep 12 – 27, 2026 · 4 ppl</span>
+  </div>
+  <nav class="sidenav" id="sidenav">
+    <button data-tab="experiences" class="active"><span class="navicon">⛩️</span> Experiences</button>
+    <button data-tab="food"><span class="navicon">🍣</span> Food</button>
+    <button data-tab="combos"><span class="navicon">🗾</span> Combos</button>
+    <button data-tab="mytrip"><span class="navicon">📌</span> My Trip <span class="navbadge" id="pickCount"></span></button>
+    <button data-tab="reservations"><span class="navicon">📅</span> Reservations</button>
+    <button data-tab="decisions"><span class="navicon">❓</span> Decisions</button>
+  </nav>
+  <div class="sidebar-footer">
+    <p>Data lives only in your browser.</p>
+    <p>See <code>plan/</code> for source markdown.</p>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<main class="content">
+
+<div class="mobile-bar">
+  <button class="menu-toggle" id="menuToggle">☰</button>
+  <div class="mobile-title">Japan Trip</div>
+</div>
+
+  <!-- Experiences tab -->
+  <section id="tab-experiences">
+    <h1 class="page-title">Experiences</h1>
+    <p class="page-subtitle">Browse all the things to do. Pick what calls to you — assign days later in <strong>My Trip</strong>.</p>
+    <div class="filterbar">
+      <input type="search" class="search" id="search" placeholder="🔍 Search…" />
+      <select id="filterArea" data-filter="area">
+        <option value="all">All areas</option>
+      </select>
+      <select id="filterEffort" data-filter="effort">
+        <option value="all">Any effort</option>
+        <option value="1">Effort 1 · easy</option>
+        <option value="2">Effort 2</option>
+        <option value="3">Effort 3 · moderate</option>
+        <option value="4">Effort 4</option>
+        <option value="5">Effort 5 · big day</option>
+      </select>
+      <select id="filterExh" data-filter="exh">
+        <option value="all">Any exhaustion</option>
+        <option value="Low">Exh: Low</option>
+        <option value="Med">Exh: Med</option>
+        <option value="High">Exh: High</option>
+        <option value="Very High">Exh: Very High</option>
+      </select>
+      <select id="filterReserve" data-filter="reserve">
+        <option value="all">Any reservation</option>
+        <option value="Yes">Reservation required</option>
+        <option value="No">Walk-up OK</option>
+      </select>
+      <span style="flex:1;"></span>
+      <select id="imageSource" title="Photo source">
+        <option value="wikipedia">📷 Wikipedia</option>
+        <option value="commons">📷 Wikimedia Commons</option>
+        <option value="openverse">📷 Openverse (CC)</option>
+        <option value="flickr">📷 Loremflickr</option>
+        <option value="none">📷 Emoji only</option>
+      </select>
+      <button class="clear-link" id="clearFilters" hidden>Clear filters</button>
+    </div>
+    <div id="expCount" class="page-subtitle" style="margin-bottom: 10px;"></div>
+    <div id="expGrid" class="grid"></div>
+  </section>
+
+  <!-- Food tab -->
+  <section id="tab-food" hidden>
+    <h1 class="page-title">Food</h1>
+    <p class="page-subtitle">3+ options per meal slot per area. Filter and find what fits the moment.</p>
+    <div class="filterbar">
+      <select id="filterFoodArea" data-filter="foodArea">
+        <option value="all">All areas</option>
+      </select>
+      <select id="filterMeal" data-filter="meal">
+        <option value="all">All meals</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Dinner">Dinner</option>
+        <option value="Café">Café</option>
+        <option value="Dessert">Dessert</option>
+        <option value="Late-night">Late-night</option>
+      </select>
+      <button class="clear-link" id="clearFoodFilters" hidden>Clear filters</button>
+    </div>
+    <div id="foodGrid" class="food-grid"></div>
+  </section>
+
+  <!-- Combos tab -->
+  <section id="tab-combos" hidden>
+    <h1 class="page-title">Day Combos</h1>
+    <p class="page-subtitle">Templates that group experiences that fit together geographically. Swap pieces freely.</p>
+    <div id="comboList"></div>
+  </section>
+
+  <!-- My Trip tab -->
+  <section id="tab-mytrip" hidden>
+    <h1 class="page-title">My Trip</h1>
+    <p class="page-subtitle">Drag picks between days. Click <em>×</em> to remove. Empty days are drop targets too.</p>
+    <div class="stat-bar">
+      <div class="stat"><strong id="statPicks">0</strong>picks</div>
+      <div class="stat"><strong id="statAssigned">0</strong>scheduled</div>
+      <div class="stat"><strong id="statReserve">0</strong>need reserve</div>
+      <div style="flex:1;"></div>
+      <button class="btn" id="exportBtn">Export as text</button>
+      <button class="btn danger" id="clearBtn">Clear all</button>
+    </div>
+    <div id="myTrip"></div>
+  </section>
+
+  <!-- Reservations tab -->
+  <section id="tab-reservations" hidden>
+    <h1 class="page-title">Reservations</h1>
+    <p class="page-subtitle">Book in this order. Earlier numbers are higher priority.</p>
+    <div id="resList"></div>
+  </section>
+
+  <!-- Decisions tab -->
+  <section id="tab-decisions" hidden>
+    <h1 class="page-title">Decisions</h1>
+    <p class="page-subtitle">Open questions to lock down before booking. Add, remove, expand.</p>
+    <div class="decision-add">
+      <input type="text" id="newDecisionQ" placeholder="New decision (question)…" />
+      <input type="text" id="newDecisionBody" placeholder="Notes / options (optional)" />
+      <button class="btn primary" id="addDecisionBtn">+ Add</button>
+    </div>
+    <div id="decList"></div>
+  </section>
+
+</main>
+</div>
+
+<!-- Mobile day picker modal (touch fallback for drag-drop) -->
+<div class="modal-backdrop" id="dayModal">
+  <div class="modal">
+    <h3 id="dayModalTitle">Assign to day</h3>
+    <div id="dayModalBody"></div>
+    <div style="text-align:right; margin-top: 8px;">
+      <button class="btn" data-action="closeModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ----------------------------- DATA ----------------------------- */
+
+const AREAS = [
+  'Shibuya/Harajuku', 'Shinjuku', 'Asakusa/Ryōgoku', 'Akihabara',
+  'Ginza/Tsukiji/Toyosu', 'Roppongi', 'Ikebukuro', 'Hidden Gems',
+  'Odaiba', 'Tokyo Extras', 'Hakone', 'Okinawa', 'Day Trips'
+];
+
+const AREA_GRADIENT = {
+  'Shibuya/Harajuku': 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)',
+  'Shinjuku': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'Asakusa/Ryōgoku': 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+  'Akihabara': 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
+  'Ginza/Tsukiji/Toyosu': 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
+  'Roppongi': 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'Ikebukuro': 'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
+  'Hidden Gems': 'linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%)',
+  'Odaiba': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+  'Tokyo Extras': 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)',
+  'Hakone': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+  'Okinawa': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'Day Trips': 'linear-gradient(135deg, #ffd2b3 0%, #ffafbd 100%)',
+};
+
+const EXPERIENCES = [
+  // Shibuya/Harajuku
+  { id: 'shib-scramble', name: 'Shibuya Scramble Crossing', area: 'Shibuya/Harajuku', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Iconic. Free overhead view from Mag\'s Park rooftop.', img: 'shibuya crossing tokyo' },
+  { id: 'shib-sky', name: 'Shibuya Sky sunset', area: 'Shibuya/Harajuku', effort: 2, exh: 'Low', time: '90 min', reserve: 'Yes', why: 'Best 360° view of Tokyo, book sunset slot.', img: 'shibuya sky observation tokyo' },
+  { id: 'shib-meiji', name: 'Meiji Jingu shrine', area: 'Shibuya/Harajuku', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Forest shrine, calm, central — the essential one.', img: 'meiji shrine torii' },
+  { id: 'shib-yoyogi', name: 'Yoyogi Park Sunday', area: 'Shibuya/Harajuku', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Rockabilly dancers, buskers, human zoo.', img: 'yoyogi park tokyo' },
+  { id: 'shib-takeshita', name: 'Takeshita Street Harajuku', area: 'Shibuya/Harajuku', effort: 2, exh: 'Med', time: '45 min', reserve: 'No', why: 'Sensory overload, crêpes, gachapon.', img: 'takeshita street harajuku' },
+  { id: 'shib-omotesando', name: 'Omotesando + Cat Street', area: 'Shibuya/Harajuku', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Tokyo\'s "Champs-Élysées," Tadao Ando architecture.', img: 'omotesando tokyo' },
+  { id: 'shib-nintendo', name: 'Nintendo Tokyo (Parco 6F)', area: 'Shibuya/Harajuku', effort: 1, exh: 'Low', time: '45 min', reserve: 'No', why: 'Splatoon photo op, exclusive merch.', img: 'nintendo store japan' },
+  { id: 'shib-pokemon', name: 'Pokémon Center Shibuya', area: 'Shibuya/Harajuku', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Same floor as Nintendo.', img: 'pokemon center tokyo' },
+  { id: 'shib-jump', name: 'Jump Store + Capcom Store', area: 'Shibuya/Harajuku', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Same floor — one stop, three shrines.', img: 'anime manga store tokyo' },
+  { id: 'shib-gigo', name: 'GIGO Shibuya arcade', area: 'Shibuya/Harajuku', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Purikura, claw machines, retro arcade.', img: 'japanese arcade neon' },
+  { id: 'shib-donki', name: 'Don Quijote Shibuya', area: 'Shibuya/Harajuku', effort: 2, exh: 'Med', time: '60–90 min', reserve: 'No', why: 'Open 24h. Souvenirs, snacks, skincare, weird stuff.', img: 'don quijote tokyo' },
+  { id: 'shib-sakurayu', name: 'Sakura-yu sento', area: 'Shibuya/Harajuku', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Public bath ¥520, the locals\' move.', img: 'sento japanese bathhouse' },
+
+  // Shinjuku
+  { id: 'shi-gyoen', name: 'Shinjuku Gyoen garden', area: 'Shinjuku', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Best garden in central Tokyo — Japanese + French + English.', img: 'shinjuku gyoen garden' },
+  { id: 'shi-metro', name: 'Tokyo Metropolitan Gov\'t obs deck', area: 'Shinjuku', effort: 1, exh: 'Low', time: '45 min', reserve: 'No', why: 'Free top-floor view, Fuji on clear days.', img: 'tokyo metropolitan government building' },
+  { id: 'shi-isetan', name: 'Isetan Shinjuku depachika', area: 'Shinjuku', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'World\'s most beautiful basement (wagyu, wagashi, bento).', img: 'depachika japanese food hall' },
+  { id: 'shi-bicqlo', name: 'Bicqlo (Bic Camera + Uniqlo)', area: 'Shinjuku', effort: 2, exh: 'Med', time: '90 min', reserve: 'No', why: 'Skincare, suitcases, clothes — 1 stop for half the shopping list.', img: 'shinjuku shopping' },
+  { id: 'shi-godzilla', name: 'Godzilla Head photo (Hotel Gracery)', area: 'Shinjuku', effort: 1, exh: 'Low', time: '15 min', reserve: 'No', why: 'Kabukicho rooftop free — base.md ✓.', img: 'godzilla shinjuku' },
+  { id: 'shi-omoide', name: 'Omoide Yokocho yakitori alleys', area: 'Shinjuku', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Tiny stalls, smoke, beer.', img: 'omoide yokocho yakitori' },
+  { id: 'shi-golden', name: 'Golden Gai bar hop', area: 'Shinjuku', effort: 2, exh: 'High', time: '2–3 hrs', reserve: 'No', why: '200 tiny bars, 6 seats each, neon postcard.', img: 'golden gai shinjuku' },
+  { id: 'shi-samurai', name: 'Samurai Restaurant show', area: 'Shinjuku', effort: 2, exh: 'Med', time: '90 min', reserve: 'Yes', why: 'Robot Restaurant successor — base.md ✓.', img: 'kabukicho neon show' },
+  { id: 'shi-lemon', name: '0 Byou Lemon Sour Sakaba', area: 'Shinjuku', effort: 1, exh: 'Low', time: '45 min', reserve: 'No', why: 'The viral "zero-second lemon" — base.md ✓.', img: 'lemon sour drink japan' },
+  { id: 'shi-kabukicho', name: 'Kabukicho neon walk', area: 'Shinjuku', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Best after 21:00.', img: 'kabukicho neon shinjuku' },
+  { id: 'shi-benfiddich', name: 'Bar Benfiddich', area: 'Shinjuku', effort: 1, exh: 'Low', time: '60 min', reserve: 'Rec', why: 'Legendary herbalist cocktails.', img: 'tokyo cocktail bar' },
+  { id: 'shi-daijingu', name: 'Tokyo Daijingu shrine', area: 'Shinjuku', effort: 2, exh: 'Low', time: '30 min', reserve: 'No', why: 'Hidden love shrine, very local.', img: 'tokyo shrine' },
+
+  // Asakusa
+  { id: 'asa-sensoji', name: 'Sensō-ji + Nakamise-dori', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'The classic. Go 8–9am. Omikuji fortunes.', img: 'sensoji asakusa temple' },
+  { id: 'asa-imado', name: 'Imado Shrine (cat shrine)', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '30 min', reserve: 'No', why: 'Origin of maneki-neko — base.md "cat temple" ✓.', img: 'maneki neko shrine' },
+  { id: 'asa-kappabashi', name: 'Kappabashi Kitchen Street', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Knives, plastic food samples, chopsticks ✓.', img: 'kappabashi kitchen street' },
+  { id: 'asa-sumida-walk', name: 'Sumida Park river walk', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '30 min', reserve: 'No', why: 'Skytree views, free.', img: 'sumida river tokyo' },
+  { id: 'asa-skytree', name: 'Tokyo Skytree obs deck', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '90 min', reserve: 'Rec', why: 'Tallest in Japan — but Shibuya Sky is nicer.', img: 'tokyo skytree' },
+  { id: 'asa-aquarium', name: 'Sumida Aquarium (Skytree Town)', area: 'Asakusa/Ryōgoku', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Ethical otter exhibit, jellyfish room.', img: 'jellyfish aquarium tokyo' },
+  { id: 'asa-solamachi', name: 'Tokyo Solamachi mall', area: 'Asakusa/Ryōgoku', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Ghibli store, Pokémon Center.', img: 'tokyo skytree town mall' },
+  { id: 'asa-sumo', name: 'Sumo Aki Basho — Ryōgoku Kokugikan', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Med', time: '3–4 hrs', reserve: 'Yes', why: 'Sep 13–27 only window of the year ✓ base.md.', img: 'sumo wrestling tournament' },
+  { id: 'asa-sumo-museum', name: 'Sumo Museum (Kokugikan)', area: 'Asakusa/Ryōgoku', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Free, inside the stadium.', img: 'sumo wrestling museum' },
+  { id: 'asa-yakatabune', name: 'Yakatabune dinner cruise (Sumida)', area: 'Asakusa/Ryōgoku', effort: 1, exh: 'Low', time: '2.5 hrs', reserve: 'Yes', why: 'Traditional + modern, ¥10K/person.', img: 'yakatabune tokyo boat' },
+  { id: 'asa-chopsticks', name: 'Chopstick making — Hyozaemon', area: 'Asakusa/Ryōgoku', effort: 1, exh: 'Low', time: '45 min', reserve: 'Yes', why: 'Polish + carve your own ✓ base.md.', img: 'japanese chopsticks craft' },
+  { id: 'asa-kintsugi', name: 'Kintsugi workshop', area: 'Asakusa/Ryōgoku', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'Yes', why: 'Repair pottery with gold ✓ base.md.', img: 'kintsugi pottery gold' },
+
+  // Akihabara
+  { id: 'aki-yodobashi', name: 'Yodobashi-Akiba mega-electronics', area: 'Akihabara', effort: 3, exh: 'Med', time: '2 hrs', reserve: 'No', why: 'Suitcases, cameras, kitchen items ✓.', img: 'akihabara electronics store' },
+  { id: 'aki-superpotato', name: 'Super Potato retro game shop', area: 'Akihabara', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: '3 floors of pre-2000 games.', img: 'retro video games japan' },
+  { id: 'aki-mandarake', name: 'Mandarake Akihabara Complex', area: 'Akihabara', effort: 2, exh: 'Med', time: '90 min', reserve: 'No', why: 'Vintage manga + figures + cels.', img: 'akihabara manga store' },
+  { id: 'aki-donki', name: 'Don Quijote Akihabara', area: 'Akihabara', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Multi-floor, AKB48 theater on top.', img: 'akihabara street neon' },
+  { id: 'aki-gigo', name: 'GIGO Akihabara', area: 'Akihabara', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Arcade, claw machines, music games.', img: 'akihabara arcade japan' },
+  { id: 'aki-maid', name: 'Maid café (@home cafe)', area: 'Akihabara', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Touristy but iconic; cleanest version.', img: 'akihabara akiba street' },
+  { id: 'aki-kanda', name: 'Kanda Myōjin shrine', area: 'Akihabara', effort: 2, exh: 'Low', time: '45 min', reserve: 'No', why: 'Tech-blessing shrine — locals bring laptops.', img: 'kanda myojin tokyo' },
+  { id: 'aki-watch', name: 'Custom watch — Knot Marunouchi', area: 'Akihabara', effort: 1, exh: 'Low', time: '60 min', reserve: 'Rec', why: 'Pick case + strap, 30-min assembly ✓.', img: 'wristwatch craftsmanship' },
+
+  // Ginza
+  { id: 'gin-tsukiji', name: 'Tsukiji Outer Market food crawl', area: 'Ginza/Tsukiji/Toyosu', effort: 3, exh: 'Med', time: '2 hrs', reserve: 'No', why: 'Best food walking in Tokyo — get there 09:00.', img: 'tsukiji market tokyo food' },
+  { id: 'gin-teamlab-planets', name: 'TeamLab Planets Toyosu', area: 'Ginza/Tsukiji/Toyosu', effort: 2, exh: 'Med', time: '90 min', reserve: 'Yes', why: 'Water-floor immersive art ✓ base.md must-do.', img: 'teamlab planets digital art' },
+  { id: 'gin-toyosu-market', name: 'Toyosu Senkyaku Banrai market', area: 'Ginza/Tsukiji/Toyosu', effort: 2, exh: 'Med', time: '90 min', reserve: 'No', why: 'Replaced Tsukiji inner market, sushi breakfast.', img: 'toyosu market tokyo' },
+  { id: 'gin-six', name: 'Ginza Six + Itoya stationery', area: 'Ginza/Tsukiji/Toyosu', effort: 2, exh: 'Med', time: '2 hrs', reserve: 'No', why: 'Rooftop garden, depachika, 12 floors of stationery.', img: 'ginza tokyo street' },
+  { id: 'gin-highfive', name: 'Bar High Five', area: 'Ginza/Tsukiji/Toyosu', effort: 1, exh: 'Low', time: '90 min', reserve: 'Rec', why: 'Hidden, top-5 Tokyo cocktail bar.', img: 'tokyo cocktail bar speakeasy' },
+  { id: 'gin-station-night', name: 'Tokyo Station Marunouchi night façade', area: 'Ginza/Tsukiji/Toyosu', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Brick architecture lit up.', img: 'tokyo station night' },
+  { id: 'gin-character', name: 'Tokyo Character Street', area: 'Ginza/Tsukiji/Toyosu', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Every character shop in one underground corridor.', img: 'tokyo station underground' },
+  { id: 'gin-hamarikyu', name: 'Hama-rikyu Garden', area: 'Ginza/Tsukiji/Toyosu', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Edo garden by the Bay, tea house in the pond.', img: 'hama rikyu garden tokyo' },
+  { id: 'gin-hibiya', name: 'Hibiya Park + Imperial East Garden', area: 'Ginza/Tsukiji/Toyosu', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Free, central, less crowded than Gyoen.', img: 'imperial palace tokyo' },
+
+  // Roppongi
+  { id: 'rop-teamlab-border', name: 'TeamLab Borderless Azabudai', area: 'Roppongi', effort: 2, exh: 'Med', time: '2 hrs', reserve: 'Yes', why: 'Newer than Planets (Feb 2024). Pick one.', img: 'teamlab borderless digital art' },
+  { id: 'rop-mori', name: 'Mori Art Museum + Tokyo City View', area: 'Roppongi', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'No', why: 'One of Tokyo\'s actually-great museums + skyline.', img: 'roppongi hills tokyo' },
+  { id: 'rop-midtown', name: 'Tokyo Midtown garden', area: 'Roppongi', effort: 1, exh: 'Low', time: '45 min', reserve: 'No', why: 'Quiet break, free.', img: 'tokyo midtown garden' },
+  { id: 'rop-azabudai', name: 'Azabudai Hills observation', area: 'Roppongi', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Newest skyscraper district, free public areas.', img: 'azabudai hills tokyo' },
+  { id: 'rop-design', name: '21_21 Design Sight (Midtown)', area: 'Roppongi', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Tadao Ando architecture, design exhibits.', img: 'tadao ando architecture' },
+  { id: 'rop-yoroniku', name: 'Yoroniku Nishiazabu wagyu yakiniku', area: 'Roppongi', effort: 2, exh: 'Med', time: '2 hrs', reserve: 'Yes', why: 'Top yakiniku in Tokyo — book 60+ days.', img: 'wagyu yakiniku grill' },
+
+  // Ikebukuro
+  { id: 'ike-pokemon', name: 'Pokémon Center Mega Tokyo', area: 'Ikebukuro', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Biggest in Tokyo ✓ base.md.', img: 'pokemon center mega tokyo' },
+  { id: 'ike-aqua', name: 'Sunshine Aquarium', area: 'Ikebukuro', effort: 1, exh: 'Low', time: '90 min', reserve: 'No', why: 'Rooftop, otters + penguins, ethical.', img: 'sunshine aquarium penguin' },
+  { id: 'ike-tenku', name: 'Konica Minolta Planetarium "Tenku"', area: 'Ikebukuro', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Healing-themed shows.', img: 'planetarium stars' },
+  { id: 'ike-animate', name: 'Animate Ikebukuro Honten', area: 'Ikebukuro', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: '9 floors anime, more curated than Akihabara.', img: 'anime store japan' },
+  { id: 'ike-skycircus', name: 'Sunshine 60 "Sky Circus"', area: 'Ikebukuro', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'VR + observation combo.', img: 'ikebukuro tokyo skyline' },
+
+  // Hidden gems
+  { id: 'hid-gotokuji', name: 'Gōtokuji (cat temple)', area: 'Hidden Gems', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Hundreds of maneki-neko statues — the photographic one.', img: 'gotokuji cat temple' },
+  { id: 'hid-shimokita', name: 'Shimokitazawa vintage crawl', area: 'Hidden Gems', effort: 3, exh: 'Med', time: '3 hrs', reserve: 'No', why: 'Indie clothes, vinyl, cafés, theaters.', img: 'shimokitazawa tokyo' },
+  { id: 'hid-tsite', name: 'Daikanyama T-Site (Tsutaya)', area: 'Hidden Gems', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Architectural pilgrimage, world-class bookstore.', img: 'daikanyama tsite bookstore' },
+  { id: 'hid-nakameguro', name: 'Nakameguro river walk', area: 'Hidden Gems', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Cherry canal even off-season, café row.', img: 'nakameguro river tokyo' },
+  { id: 'hid-yanaka', name: 'Yanaka Ginza shitamachi street', area: 'Hidden Gems', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Old Tokyo, cats everywhere, sunset stairs.', img: 'yanaka old tokyo street' },
+  { id: 'hid-kagurazaka', name: 'Kagurazaka (former geisha district)', area: 'Hidden Gems', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Bistros + small shrines, quiet sophistication.', img: 'kagurazaka tokyo alley' },
+  { id: 'hid-sangenjaya', name: 'Sangenjaya + Carrot Tower view', area: 'Hidden Gems', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Free Carrot Tower observation deck.', img: 'tokyo neighborhood' },
+  { id: 'hid-nezu', name: 'Nezu Museum + garden (Aoyama)', area: 'Hidden Gems', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Asian art + secret garden, exceptional.', img: 'nezu museum garden' },
+
+  // Odaiba
+  { id: 'oda-round1', name: 'Round 1 Stadium DiverCity (Spo-Cha)', area: 'Odaiba', effort: 3, exh: 'High', time: '2–3 hrs', reserve: 'No', why: 'Sports + arcade + karaoke under one roof ✓ base.md.', img: 'bowling arcade japan' },
+  { id: 'oda-joypolis', name: 'Joypolis indoor theme park', area: 'Odaiba', effort: 3, exh: 'High', time: '3 hrs', reserve: 'No', why: 'Sega-themed, all-indoor coasters + VR — Mario Kart substitute.', img: 'odaiba theme park' },
+  { id: 'oda-gundam', name: 'Unicorn Gundam DiverCity', area: 'Odaiba', effort: 1, exh: 'Low', time: '30 min', reserve: 'No', why: 'Free, life-size statue, animated at sunset.', img: 'gundam odaiba statue' },
+  { id: 'oda-rainbow', name: 'Rainbow Bridge night walk', area: 'Odaiba', effort: 2, exh: 'Med', time: '60 min', reserve: 'No', why: 'Pedestrian path with skyline view.', img: 'rainbow bridge tokyo' },
+
+  // Tokyo extras
+  { id: 'ext-rikugien', name: 'Rikugien Garden (Komagome)', area: 'Tokyo Extras', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Edo-period strolling garden ✓ base.md.', img: 'rikugien garden tokyo' },
+  { id: 'ext-chinzanso', name: 'Chinzanso garden + afternoon tea', area: 'Tokyo Extras', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'Yes', why: 'Mist garden, hotel tea ✓ base.md.', img: 'japanese afternoon tea garden' },
+  { id: 'ext-disneysea', name: 'Disneyland Sea (Maihama)', area: 'Tokyo Extras', effort: 5, exh: 'Very High', time: 'full day', reserve: 'Yes', why: 'Best Disney park in the world ✓ base.md "if time".', img: 'tokyo disney sea' },
+  { id: 'ext-mttakao', name: 'Mt Takao', area: 'Tokyo Extras', effort: 3, exh: 'Med', time: 'half day', reserve: 'No', why: '50 min from Shinjuku, easy cable car, Fuji view.', img: 'mt takao japan' },
+  { id: 'ext-ghibli', name: 'Ghibli Museum (Mitaka)', area: 'Tokyo Extras', effort: 2, exh: 'Low', time: '3 hrs', reserve: 'Yes', why: 'Exact 1 month out at 10:00 JST — sells out in minutes.', img: 'ghibli totoro studio' },
+  { id: 'ext-tokyodome', name: 'Tokyo Dome — Yomiuri Giants baseball', area: 'Tokyo Extras', effort: 2, exh: 'Med', time: '4 hrs', reserve: 'Yes', why: 'Sep regular season ✓ base.md — Japanese baseball culture is fun.', img: 'tokyo dome baseball' },
+  { id: 'ext-sushi-class', name: 'Cooking class — sushi (Tsukiji Cooking)', area: 'Tokyo Extras', effort: 2, exh: 'Low', time: '3 hrs', reserve: 'Yes', why: 'Base.md ✓ — eat your own makimono.', img: 'sushi making class' },
+  { id: 'ext-ramen-class', name: 'Cooking class — ramen (Tokyo Ramen Tour)', area: 'Tokyo Extras', effort: 2, exh: 'Low', time: '3 hrs', reserve: 'Yes', why: 'Base.md ✓.', img: 'ramen noodles cooking' },
+  { id: 'ext-headspa', name: 'Head spa (uka / Maison Sumiya)', area: 'Tokyo Extras', effort: 1, exh: 'Low', time: '90 min', reserve: 'Yes', why: 'Base.md must-do ✓.', img: 'head spa japan' },
+  { id: 'ext-sento', name: 'Public sento (Sakura-yu, Hinodeyu)', area: 'Tokyo Extras', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Cheap onsen substitute, ¥520.', img: 'sento japanese bathhouse' },
+  { id: 'ext-laqua', name: 'Spa LaQua (Tokyo Dome City)', area: 'Tokyo Extras', effort: 1, exh: 'Low', time: '2 hrs', reserve: 'No', why: 'Urban day spa, real onsen water, indoor.', img: 'japanese onsen spa' },
+
+  // Hakone
+  { id: 'hak-openair', name: 'Hakone Open-Air Museum', area: 'Hakone', effort: 3, exh: 'Med', time: '90 min', reserve: 'No', why: 'Picasso pavilion + outdoor sculpture — the rare must-do museum.', img: 'hakone open air museum sculpture' },
+  { id: 'hak-owakudani', name: 'Owakudani sulfur vents + black eggs', area: 'Hakone', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Volcanic crater, ropeway over steam, Fuji views ✓.', img: 'owakudani hakone volcano' },
+  { id: 'hak-pirate', name: 'Hakone Pirate Ship across Lake Ashi', area: 'Hakone', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Lake cruise, view of Hakone Shrine torii from water.', img: 'lake ashi hakone' },
+  { id: 'hak-shrine', name: 'Hakone Shrine + Lake torii', area: 'Hakone', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'The vermillion-torii-in-the-lake icon — queue early.', img: 'hakone shrine torii lake' },
+  { id: 'hak-pola', name: 'Pola Museum of Art', area: 'Hakone', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'No', why: 'Impressionists in cedar forest — rainy-day swap.', img: 'pola museum hakone forest' },
+  { id: 'hak-venetian', name: 'Hakone Venetian Glass Museum', area: 'Hakone', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Murano glass in a Gora villa.', img: 'venetian glass art' },
+  { id: 'hak-onsen', name: 'Onsen at ryokan', area: 'Hakone', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'The whole point ✓ base.md.', img: 'onsen ryokan hakone' },
+  { id: 'hak-kaiseki', name: 'Kaiseki dinner at ryokan', area: 'Hakone', effort: 1, exh: 'Low', time: '2 hrs', reserve: 'No', why: '10+ courses, seasonal — included with stay.', img: 'kaiseki japanese dinner' },
+  { id: 'hak-bakery', name: 'Bakery & Table (lake foot-bath)', area: 'Hakone', effort: 1, exh: 'Low', time: '60 min', reserve: 'No', why: 'Eat lakeside with foot in onsen water.', img: 'hakone lake cafe' },
+
+  // Okinawa
+  { id: 'oki-kokusai', name: 'Kokusai-dori main street (Naha)', area: 'Okinawa', effort: 2, exh: 'Low', time: '90 min', reserve: 'No', why: 'Souvenir HQ, shisa ceramics.', img: 'kokusai dori naha okinawa' },
+  { id: 'oki-tsuboya', name: 'Tsuboya pottery district', area: 'Okinawa', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Hidden ceramics street parallel to Kokusai-dori.', img: 'okinawa pottery shisa' },
+  { id: 'oki-shuri', name: 'Shuri Castle', area: 'Okinawa', effort: 3, exh: 'Med', time: '2 hrs', reserve: 'No', why: 'Partial reopening post-2019 fire — verify status.', img: 'shuri castle okinawa' },
+  { id: 'oki-sefa', name: 'Sefa-Utaki sacred site', area: 'Okinawa', effort: 3, exh: 'Med', time: '2 hrs', reserve: 'No', why: 'UNESCO Ryukyu spiritual center, south coast.', img: 'sefa utaki okinawa sacred' },
+  { id: 'oki-bluecave', name: 'Blue Cave try-dive (Cape Maeda)', area: 'Okinawa', effort: 4, exh: 'Med', time: '3 hrs', reserve: 'Yes', why: 'The iconic Okinawa dive ✓ base.md.', img: 'okinawa blue cave snorkel' },
+  { id: 'oki-kerama', name: 'Kerama Islands boat dive', area: 'Okinawa', effort: 5, exh: 'High', time: 'full day', reserve: 'Yes', why: '30m+ visibility, better than Blue Cave for cert divers.', img: 'kerama islands okinawa diving' },
+  { id: 'oki-manza', name: 'Manza Beach + Cape Manzamo', area: 'Okinawa', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'No', why: 'Free public beach + dramatic cliff sunset.', img: 'cape manzamo okinawa cliff' },
+  { id: 'oki-bios', name: 'Bios no Oka subtropical garden', area: 'Okinawa', effort: 3, exh: 'Med', time: '3 hrs', reserve: 'No', why: 'Jungle boat ride, water-buffalo cart.', img: 'okinawa jungle garden' },
+  { id: 'oki-american', name: 'American Village (Mihama)', area: 'Okinawa', effort: 2, exh: 'Low', time: '2 hrs', reserve: 'No', why: 'Neon Ferris wheel, retro Americana — sunset dinner.', img: 'american village okinawa ferris' },
+  { id: 'oki-churaumi', name: 'Churaumi Aquarium', area: 'Okinawa', effort: 3, exh: 'Med', time: '3 hrs', reserve: 'No', why: 'One of world\'s top aquariums — whale shark tank.', img: 'churaumi aquarium whale shark' },
+  { id: 'oki-kouri', name: 'Kouri Island + Kouri Bridge', area: 'Okinawa', effort: 3, exh: 'Med', time: '3 hrs', reserve: 'No', why: '2km bridge over turquoise, Heart Rock.', img: 'kouri bridge okinawa turquoise' },
+  { id: 'oki-pineapple', name: 'Pineapple Park', area: 'Okinawa', effort: 2, exh: 'Low', time: '60 min', reserve: 'No', why: 'Quirky, kid-fun.', img: 'pineapple farm tropical' },
+  { id: 'oki-hedo', name: 'Cape Hedo (far north)', area: 'Okinawa', effort: 4, exh: 'High', time: 'full day', reserve: 'No', why: 'End of Okinawa main island, dramatic cliffs.', img: 'cape hedo okinawa cliff ocean' },
+
+  // Day Trips
+  { id: 'dt-yokohama', name: 'Yokohama day trip', area: 'Day Trips', effort: 3, exh: 'Med', time: 'half/full day', reserve: 'Rec', why: 'Trick Art + Chinatown + Cup Noodle + Minatomirai. 35 min.', img: 'yokohama minatomirai skyline' },
+  { id: 'dt-kamakura', name: 'Kamakura day trip', area: 'Day Trips', effort: 4, exh: 'High', time: 'full day', reserve: 'No', why: 'Great Buddha + Hokokuji Bamboo Grove — base.md "alt to Kyoto".', img: 'kamakura great buddha' },
+  { id: 'dt-kawaguchi', name: 'Lake Kawaguchiko (Fuji)', area: 'Day Trips', effort: 4, exh: 'High', time: 'full day', reserve: 'Rec', why: 'Best Fuji shots in Japan — clear days only.', img: 'mount fuji kawaguchiko' },
+  { id: 'dt-nikko', name: 'Nikko (Tōshōgū + waterfalls)', area: 'Day Trips', effort: 5, exh: 'High', time: 'full day', reserve: 'No', why: 'Possible early autumn color in Sep.', img: 'nikko toshogu shrine' },
+  { id: 'dt-enoshima', name: 'Enoshima (island + aquarium)', area: 'Day Trips', effort: 3, exh: 'Med', time: 'half day', reserve: 'No', why: 'Combine with Kamakura.', img: 'enoshima island japan' },
+];
+
+const FOOD = [
+  // Shibuya
+  { area: 'Shibuya/Harajuku', meal: 'Breakfast', name: '% Arabica Daikanyama', note: 'matcha latte + croissants' },
+  { area: 'Shibuya/Harajuku', meal: 'Breakfast', name: 'Sarutahiko Coffee Ebisu', note: 'best-balanced specialty roaster' },
+  { area: 'Shibuya/Harajuku', meal: 'Breakfast', name: 'Lattest Omotesando', note: 'latte specialists' },
+  { area: 'Shibuya/Harajuku', meal: 'Breakfast', name: 'Bills Omotesando', note: 'ricotta hotcakes' },
+  { area: 'Shibuya/Harajuku', meal: 'Lunch', name: 'Afuri Harajuku', note: 'yuzu shio ramen — bright, light' },
+  { area: 'Shibuya/Harajuku', meal: 'Lunch', name: 'Maisen Aoyama', note: 'tonkatsu institution' },
+  { area: 'Shibuya/Harajuku', meal: 'Lunch', name: 'Katsukura Shibuya', note: 'grind your own sesame' },
+  { area: 'Shibuya/Harajuku', meal: 'Lunch', name: 'Kaikaya by the Sea', note: 'seafood izakaya lunch sets' },
+  { area: 'Shibuya/Harajuku', meal: 'Lunch', name: 'Uobei Shibuya', note: 'touchscreen conveyor sushi, ¥110/plate' },
+  { area: 'Shibuya/Harajuku', meal: 'Dinner', name: 'Han no Daidokoro Honten', note: 'yakiniku, English menu' },
+  { area: 'Shibuya/Harajuku', meal: 'Dinner', name: 'Sushi no Midori Shibuya', note: 'reasonable, worth the queue' },
+  { area: 'Shibuya/Harajuku', meal: 'Dinner', name: 'Tsubohachi Shibuya', note: 'classic izakaya chain' },
+  { area: 'Shibuya/Harajuku', meal: 'Dinner', name: 'Gyukatsu Motomura', note: 'sear-your-own beef on a stone' },
+  { area: 'Shibuya/Harajuku', meal: 'Café', name: 'Koffee Mameya Kakeru', note: 'single-origin tasting flight' },
+  { area: 'Shibuya/Harajuku', meal: 'Café', name: 'Streamer Coffee Shibuya', note: 'latte art champion' },
+  { area: 'Shibuya/Harajuku', meal: 'Café', name: 'Camelback Sandwiches', note: 'tamago sando legend' },
+  { area: 'Shibuya/Harajuku', meal: 'Café', name: 'L\'Occitane Café', note: 'overlooks Scramble' },
+  { area: 'Shibuya/Harajuku', meal: 'Dessert', name: 'Ouca', note: 'gourmet ice cream — beni-imo' },
+  { area: 'Shibuya/Harajuku', meal: 'Late-night', name: 'Uobei Shibuya', note: 'open until 3am' },
+
+  // Shinjuku
+  { area: 'Shinjuku', meal: 'Breakfast', name: 'Blue Bottle Shinjuku', note: 'NEWoMan' },
+  { area: 'Shinjuku', meal: 'Breakfast', name: 'Hoshino Coffee', note: 'fluffy soufflé pancakes' },
+  { area: 'Shinjuku', meal: 'Breakfast', name: 'Berg', note: '60-year coffee + sausage bar' },
+  { area: 'Shinjuku', meal: 'Lunch', name: 'Tsunahachi tempura', note: 'since 1923, ¥2,500 set' },
+  { area: 'Shinjuku', meal: 'Lunch', name: 'Menya Musashi', note: 'rich tonkotsu ramen' },
+  { area: 'Shinjuku', meal: 'Lunch', name: 'Funabashiya', note: 'tempura + soba combo' },
+  { area: 'Shinjuku', meal: 'Dinner', name: 'Omoide Yokocho crawl', note: 'Asadachi (offal), Kabuto (eel)' },
+  { area: 'Shinjuku', meal: 'Dinner', name: 'Uoshin Shinjuku', note: 'huge izakaya, sashimi rocks' },
+  { area: 'Shinjuku', meal: 'Dinner', name: 'Kappo Yoshiba', note: 'sumo theme + chankonabe' },
+  { area: 'Shinjuku', meal: 'Dinner', name: 'Torikizoku Shinjuku', note: 'every skewer ¥350, cheap group fun' },
+  { area: 'Shinjuku', meal: 'Café', name: 'Pierre Hermé Aoyama', note: 'pastry pilgrimage' },
+  { area: 'Shinjuku', meal: 'Café', name: 'Kagari Shinjuku', note: 'premium dorayaki + matcha' },
+  { area: 'Shinjuku', meal: 'Late-night', name: 'CoCo Ichibanya curry', note: 'perfect drunk food' },
+  { area: 'Shinjuku', meal: 'Late-night', name: 'Ichiran Shinjuku', note: 'solo-booth ramen, open very late' },
+
+  // Asakusa
+  { area: 'Asakusa/Ryōgoku', meal: 'Breakfast', name: 'Pelican Café', note: 'cult toast specialist' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Breakfast', name: 'Kagetsudo', note: 'giant melonpan at Sensō-ji' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Lunch', name: 'Asakusa Sometaro', note: 'DIY okonomiyaki on tatami' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Lunch', name: 'Daikokuya tempura', note: 'ebi tendon institution' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Lunch', name: 'Otafuku', note: 'oden since 1916' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Lunch', name: 'Bunsendo', note: 'soba in a 100-year house' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Dinner', name: 'Chanko Tomoegata', note: 'sumo stew, the institution — reserve' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Dinner', name: 'Chanko Doji', note: 'cheaper chanko, walk-in' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Dinner', name: 'Popeye Beer Pub Ryōgoku', note: '70 craft taps — best beer bar in Tokyo' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Dessert', name: 'Suzukien Asakusa', note: 'world\'s strongest matcha gelato, 7 levels' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Dessert', name: 'Asakusa Silk Pudding', note: '' },
+  { area: 'Asakusa/Ryōgoku', meal: 'Late-night', name: 'Hoppy Street', note: 'locals\' all-night izakaya alley' },
+
+  // Akihabara
+  { area: 'Akihabara', meal: 'Lunch', name: 'Kanda Matsuya', note: 'soba since 1884' },
+  { area: 'Akihabara', meal: 'Lunch', name: 'Hinoya Curry', note: 'wagyu curry, cheap, beloved' },
+  { area: 'Akihabara', meal: 'Lunch', name: 'Niboshi Ramen Nagi', note: 'anchovy ramen' },
+  { area: 'Akihabara', meal: 'Dinner', name: 'Yakiniku Like', note: 'solo-style yakiniku, surprisingly great' },
+  { area: 'Akihabara', meal: 'Dinner', name: 'Toriyoshi Kanda', note: 'yakitori counter' },
+  { area: 'Akihabara', meal: 'Café', name: 'Pokémon Café Nihombashi', note: 'reserve exactly 31 days out, 18:00 JST' },
+
+  // Ginza
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Breakfast', name: 'Tsukiji Itadori Bekkan', note: 'uni rice bowl' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Breakfast', name: 'Yamacho', note: 'tamagoyaki on a stick' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Breakfast', name: 'Sushizanmai Tsukiji', note: '24-hr institution' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Breakfast', name: 'Marutoyo Suisan', note: 'tuna sashimi platter ¥1,000' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Lunch', name: 'Birdland', note: 'Michelin yakitori lunch ¥3,800' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Lunch', name: 'Tempura Kondo', note: 'Michelin 2★ tempura lunch ¥8,000' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Lunch', name: 'Kyubey Ginza', note: 'legendary sushi, lunch from ¥6K' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Lunch', name: 'Manten Sushi Marunouchi', note: 'approachable omakase ¥6–8K' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Dinner', name: 'Sushi Tokami', note: 'high omakase ¥30K — reserve 60 days' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Dinner', name: 'Sushi Ichi Ginza', note: 'approachable omakase ¥15–20K' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Dinner', name: 'Ginza Steak', note: 'all-you-can-eat A5 wagyu, ¥15K' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Dinner', name: 'Sembikiya Fruit Parlor', note: 'fruit sandwiches + parfaits' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Café', name: 'Cafe de l\'Ambre', note: 'since 1948, aged coffee' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Café', name: 'Henri Charpentier Ginza', note: 'savarin crêpes + tea' },
+  { area: 'Ginza/Tsukiji/Toyosu', meal: 'Café', name: 'Tsuruya Yoshinobu', note: 'wagashi made tableside' },
+
+  // Roppongi
+  { area: 'Roppongi', meal: 'Dinner', name: 'Yoroniku Nishiazabu', note: 'top yakiniku, hard to book' },
+  { area: 'Roppongi', meal: 'Dinner', name: 'Inakaya Roppongi', note: 'robatayaki theater' },
+  { area: 'Roppongi', meal: 'Dinner', name: 'Gonpachi Nishiazabu', note: '"Kill Bill restaurant"' },
+  { area: 'Roppongi', meal: 'Dinner', name: 'Two Rooms Aoyama', note: 'rooftop dinner + Tokyo Tower view' },
+  { area: 'Roppongi', meal: 'Café', name: 'Cafe Kitsuné Aoyama', note: 'French-Japanese boutique' },
+
+  // Ikebukuro
+  { area: 'Ikebukuro', meal: 'Lunch', name: 'Mutekiya', note: 'Ikebukuro tonkotsu, queue but unmissable' },
+  { area: 'Ikebukuro', meal: 'Lunch', name: 'Tonkatsu Imakatsu Ikebukuro', note: '' },
+  { area: 'Ikebukuro', meal: 'Lunch', name: 'Kagari Ikebukuro', note: 'tori paitan ramen' },
+
+  // Hidden gems
+  { area: 'Hidden Gems', meal: 'Dinner', name: 'Tonki Meguro', note: 'tonkatsu institution, no reservations' },
+  { area: 'Hidden Gems', meal: 'Dinner', name: 'Toriki Meguro', note: 'yakitori, Michelin Bib — reserve' },
+  { area: 'Hidden Gems', meal: 'Café', name: 'Onibus Coffee Nakameguro', note: 'train-track café' },
+  { area: 'Hidden Gems', meal: 'Café', name: 'Sidewalk Stand Nakameguro', note: 'toast + coffee, locals only' },
+  { area: 'Hidden Gems', meal: 'Café', name: 'Fuglen Tomigaya', note: 'Norwegian-Japanese third wave' },
+  { area: 'Hidden Gems', meal: 'Café', name: 'Bear Pond Espresso Sangenjaya', note: 'only 30 espressos/day before noon' },
+  { area: 'Hidden Gems', meal: 'Dessert', name: 'Paris S\'éveille Jiyugaoka', note: 'top patissier' },
+
+  // Odaiba
+  { area: 'Odaiba', meal: 'Lunch', name: 'Sushi Misakimaru', note: 'DiverCity, cheap conveyor' },
+  { area: 'Odaiba', meal: 'Lunch', name: 'Bills Odaiba', note: 'waterfront brunch' },
+
+  // Hakone
+  { area: 'Hakone', meal: 'Lunch', name: 'Hatsuhana Yumoto', note: 'handmade soba' },
+  { area: 'Hakone', meal: 'Lunch', name: 'Bakery & Table Hakone', note: 'lakeside lunch + foot bath' },
+  { area: 'Hakone', meal: 'Lunch', name: 'Marutomi Honten', note: 'eel rice bowls' },
+  { area: 'Hakone', meal: 'Café', name: 'Naraya Café', note: 'free foot-bath with coffee, Miyanoshita' },
+
+  // Okinawa
+  { area: 'Okinawa', meal: 'Lunch', name: 'Yunangi (Naha)', note: 'taco rice, goya champuru, Okinawa soba' },
+  { area: 'Okinawa', meal: 'Lunch', name: 'Ufuya (Naha)', note: 'traditional house, course menu' },
+  { area: 'Okinawa', meal: 'Lunch', name: 'Pizza in the Sky', note: 'cliff pizzeria, insane view' },
+  { area: 'Okinawa', meal: 'Lunch', name: 'Captain Kangaroo', note: 'cult Nago burger spot' },
+  { area: 'Okinawa', meal: 'Lunch', name: 'Cafe Yabusachi', note: 'cliff café, ocean view' },
+  { area: 'Okinawa', meal: 'Dinner', name: 'Yotsutake (Naha)', note: 'Ryukyu court cuisine + dance show' },
+  { area: 'Okinawa', meal: 'Dinner', name: 'Hamabe no Chaya', note: 'cliffside cocktails, sunset' },
+  { area: 'Okinawa', meal: 'Dinner', name: 'Aqua Mauna Onna', note: 'seafood + awamori' },
+  { area: 'Okinawa', meal: 'Dinner', name: 'Transit Café (American Village)', note: 'sunset over Sunset Beach' },
+  { area: 'Okinawa', meal: 'Dinner', name: 'Captain\'s Inn', note: 'Okinawan-American steakhouse since \'55' },
+  { area: 'Okinawa', meal: 'Dessert', name: 'Blue Seal Ice Cream', note: 'beni-imo flavor' },
+  { area: 'Okinawa', meal: 'Breakfast', name: 'Pork Tamago Onigiri Honten', note: 'artisanal Spam musubi ¥400' },
+
+  // Day Trips
+  { area: 'Day Trips', meal: 'Lunch', name: 'Manchinrō Yokohama Chinatown', note: 'xiaolongbao since 1892' },
+  { area: 'Day Trips', meal: 'Lunch', name: 'Hatsuhana Kamakura', note: 'soba on tatami' },
+  { area: 'Day Trips', meal: 'Lunch', name: 'Hoto Fudo Kawaguchiko', note: 'iron-pot stew noodles' },
+  { area: 'Day Trips', meal: 'Dinner', name: 'Bills Yokohama Akarenga', note: 'red-brick warehouse waterfront' },
+  { area: 'Day Trips', meal: 'Café', name: 'Komachi Street Kamakura', note: 'matcha soft serve + shirasu toast' },
+];
+
+const COMBOS = [
+  { id: 'a', title: 'Welcome Soft Landing', effort: 2, exh: 'Low', walking: '~3 km',
+    items: ['Shibuya Scramble (Mag\'s Park roof)', 'Don Quijote Shibuya browse', 'Izakaya dinner (Tsubohachi)', 'Early sleep'],
+    desc: 'Best for arrival day or any post-heavy recovery.' },
+  { id: 'b', title: 'Modern Tokyo Loop', effort: 3, exh: 'Med', walking: '~6 km',
+    items: ['Meiji Jingu (morning)', 'Takeshita → Omotesando → Cat Street', 'Nintendo + Pokémon Shibuya', 'Koffee Mameya Kakeru', 'Shibuya Sky sunset', 'Dinner: Uobei or Kaikaya'],
+    desc: 'Best Day 2 — perfect intro after jetlag.' },
+  { id: 'c', title: 'Old Tokyo + Sumo', effort: 4, exh: 'High', walking: '~7 km',
+    items: ['Sensō-ji + Nakamise', 'Imado cat shrine', 'Kappabashi for chopsticks + knives', 'Sumida Aquarium', 'SUMO at Kokugikan', 'Chanko Tomoegata dinner'],
+    desc: 'Heavy day but everything connects. Aki Basho only Sep 13–25.' },
+  { id: 'd', title: 'Shinjuku Day → Night', effort: 4, exh: 'High', walking: '~7 km',
+    items: ['Shinjuku Gyoen', 'Tsunahachi lunch', 'Isetan depachika + Bicqlo', 'Godzilla Head photo', 'Bar Benfiddich (17:30)', 'Omoide Yokocho yakitori', '0 Byou Lemon Sour', 'Samurai Restaurant', 'Golden Gai bar hop'],
+    desc: 'The big Tokyo night. Plan a rest day after.' },
+  { id: 'e', title: 'Yokohama Day Trip', effort: 3, exh: 'Med', walking: '~5 km',
+    items: ['Cup Noodle Museum', 'Chinatown lunch', 'Trick Art Cruise or Museum', 'Yamashita Park → Osanbashi Pier', 'Cosmo Clock 21 sunset', 'Akarenga dinner'],
+    desc: 'Half- to full-day. 35-min train back.' },
+  { id: 'f', title: 'Kamakura Alternative', effort: 4, exh: 'Med-High', walking: '~8 km',
+    items: ['Great Buddha', 'Hokokuji Bamboo Grove + matcha', 'Komachi Street snacks', 'Hase-dera + sea view', 'Enoshima sunset (optional)'],
+    desc: 'Beats Yokohama if bamboo + temples matter more than novelty.' },
+  { id: 'g', title: 'TeamLab + Tsukiji + Ginza', effort: 3, exh: 'Med', walking: '~5 km',
+    items: ['Tsukiji Outer Market breakfast', 'TeamLab Planets Toyosu', 'Ginza 6 depachika + Itoya', 'Knot Ginza watch', 'Bar High Five', 'Wagyu dinner (Ginza Steak)'],
+    desc: 'Heavy-eating, low-walking day.' },
+  { id: 'h', title: 'Recovery + Round 1', effort: 3, exh: 'Med', walking: '~4 km',
+    items: ['Slow café morning (Bear Pond / Fuglen)', 'Head spa appointment', 'Chinzanso afternoon tea', 'Round 1 Stadium Spo-Cha (Odaiba)', 'Konbini dinner challenge'],
+    desc: 'Perfect day after Okinawa return, or post-heavy night.' },
+  { id: 'i', title: 'Hidden Gems Hop', effort: 3, exh: 'Low-Med', walking: '~6 km',
+    items: ['Gōtokuji cat temple', 'Shimokitazawa vintage + cafés', 'Daikanyama T-Site', 'Nakameguro river walk', 'Onibus Coffee', 'Toriki Meguro dinner (reserve)'],
+    desc: 'The locals\' Tokyo, low-stress.' },
+  { id: 'j', title: 'Last Day Easy', effort: 2, exh: 'Low', walking: '~4 km',
+    items: ['Rikugien Garden morning', 'Lunch wherever', 'Last shopping (Don Quijote / Kappabashi)', 'Spa LaQua urban onsen', 'Farewell sushi omakase', 'Final Shibuya Crossing walk'],
+    desc: 'Save energy for the morning flight.' },
+  { id: 'k', title: 'Theme Park All-In (Disney Sea)', effort: 5, exh: 'Very High', walking: '15+ km',
+    items: ['Disney Sea 08:00 → 22:00', 'Tower of Terror, Soaring, Journey to Center of the Earth', 'Premier Access for 2–3 attractions', 'Park dinner'],
+    desc: 'Only if Disney Sea is a top-3 priority. Full day + recovery.' },
+];
+
+const DAYS = [
+  { idx: 0, label: 'Unassigned', sub: 'Picks without a day yet' },
+  { idx: 1, label: 'Day 1 · Sep 12 Sat', sub: 'Arrival (15:20 Haneda) — Tokyo Pt 1' },
+  { idx: 2, label: 'Day 2 · Sep 13 Sun', sub: 'Tokyo Pt 1' },
+  { idx: 3, label: 'Day 3 · Sep 14 Mon', sub: 'Tokyo Pt 1 — Sumo opens' },
+  { idx: 4, label: 'Day 4 · Sep 15 Tue', sub: 'Tokyo Pt 1' },
+  { idx: 5, label: 'Day 5 · Sep 16 Wed', sub: 'Tokyo Pt 1' },
+  { idx: 6, label: 'Day 6 · Sep 17 Thu', sub: 'Tokyo Pt 1' },
+  { idx: 7, label: 'Day 7 · Sep 18 Fri', sub: 'Hakone ryokan (overnight)' },
+  { idx: 8, label: 'Day 8 · Sep 19 Sat', sub: 'Hakone → Tokyo' },
+  { idx: 9, label: 'Day 9 · Sep 20 Sun', sub: 'Fly to Okinawa' },
+  { idx: 10, label: 'Day 10 · Sep 21 Mon', sub: 'Okinawa (Silver Week holiday)' },
+  { idx: 11, label: 'Day 11 · Sep 22 Tue', sub: 'Okinawa → Tokyo (evening)' },
+  { idx: 12, label: 'Day 12 · Sep 23 Wed', sub: 'Tokyo Pt 2 (Autumn Equinox holiday)' },
+  { idx: 13, label: 'Day 13 · Sep 24 Thu', sub: 'Tokyo Pt 2' },
+  { idx: 14, label: 'Day 14 · Sep 25 Fri', sub: 'Tokyo Pt 2' },
+  { idx: 15, label: 'Day 15 · Sep 26 Sat', sub: 'Tokyo Pt 2 — last full day' },
+];
+
+// Reservation guidance keyed by experience id — used when a pick needs reservation.
+// `prio` lower = book sooner. Items without a guide fall back to default.
+const RES_GUIDE = {
+  'asa-sumo':            { prio: 1, when: 'Tickets release Aug 1', note: 'buysumotickets.com — Masu C or Chair B.' },
+  'rop-yoroniku':        { prio: 2, when: '60+ days out', note: 'Hardest non-omakase booking in Tokyo.' },
+  'ext-disneysea':       { prio: 3, when: '60 days out', note: '+ Premier Access add-on the morning-of.' },
+  'oki-kerama':          { prio: 4, when: '2–3 weeks out', note: 'Full-day boat dive, certified divers.' },
+  'oki-bluecave':        { prio: 4, when: '2–3 weeks out', note: 'Natural Blue or Piranha Divers.' },
+  'gin-teamlab-planets': { prio: 5, when: '1–2 weeks out', note: 'Pick a date + time slot, evening best.' },
+  'rop-teamlab-border':  { prio: 5, when: '1–2 weeks out', note: 'Pick this OR Planets, not both.' },
+  'ext-ghibli':          { prio: 6, when: 'Exactly 1 month out, 10:00 JST', note: 'Sells out in minutes.' },
+  'ext-tokyodome':       { prio: 7, when: '2 weeks out', note: 'Yomiuri Giants home schedule.' },
+  'asa-yakatabune':      { prio: 8, when: '1–2 weeks out', note: '¥10K/person dinner cruise.' },
+  'asa-chopsticks':      { prio: 8, when: '1–2 weeks out', note: 'Hyozaemon Asakusa workshop.' },
+  'asa-kintsugi':        { prio: 8, when: '1–2 weeks out', note: 'Repair pottery with gold, 2 hrs.' },
+  'ext-sushi-class':     { prio: 8, when: '1–2 weeks out', note: 'Tsukiji Cooking.' },
+  'ext-ramen-class':     { prio: 8, when: '1–2 weeks out', note: 'Tokyo Ramen Tour class.' },
+  'ext-chinzanso':       { prio: 9, when: '1 week out', note: 'Garden View Tea with mist garden.' },
+  'ext-headspa':         { prio: 9, when: '1 week out', note: 'Uka Ginza Six or Maison Sumiya Daikanyama.' },
+  'shi-samurai':         { prio: 9, when: '1 week out', note: 'Robot Restaurant successor.' },
+  'shi-benfiddich':      { prio: 10, when: 'Same week', note: 'Tiny bar, limited seats.' },
+  'gin-highfive':        { prio: 10, when: 'Same week', note: 'Top-5 Tokyo cocktail bar.' },
+  'asa-skytree':         { prio: 11, when: 'Same day OK', note: 'Optional skip-the-line.' },
+  'aki-watch':           { prio: 11, when: 'Same day OK', note: 'Knot 30-min assembly.' },
+  'dt-yokohama':         { prio: 11, when: 'Cup Noodle slot 1 week out', note: 'Optional; busy weekends.' },
+  'dt-kawaguchi':        { prio: 11, when: 'Check Fuji forecast', note: 'Reserve only on clear days.' },
+};
+
+const DEFAULT_DECISIONS = [
+  { id: 'd-hak', q: 'Hakone vs Kawaguchiko (or both)?',
+    body: 'Hakone = onsen + kaiseki ryokan culture. Kawaguchiko = clearer Fuji views. Or split both as 2 nights total.' },
+  { id: 'd-sumo', q: 'Sumo day — which date?',
+    body: 'Pick a weekday for Aki Basho. Recommend Mon Sep 14 or Tue Sep 15. Avoid weekends (sold out + crowded).' },
+  { id: 'd-tl', q: 'TeamLab Planets vs Borderless?',
+    body: 'Planets (Toyosu) has water floor → more unique. Borderless (Azabudai) is newer + larger. Pick one or skip.' },
+  { id: 'd-ds', q: 'Disney Sea — in or out?',
+    body: 'Costs a full day + recovery. If yes, slot Sep 16 or Sep 25.' },
+  { id: 'd-mk', q: 'Mario Kart go-karting — confirmed cut?',
+    body: 'None of the guests have IDPs → legally can\'t drive. Substituted with Joypolis + Round 1 Spo-Cha. Confirm or override.' },
+  { id: 'd-om', q: 'Sushi omakase tier?',
+    body: '¥15K (Manten, Sushi Ichi — approachable) or ¥30K+ (Tokami, Saito — high-end)?' },
+  { id: 'd-kam', q: 'Kamakura vs Yokohama day trip?',
+    body: 'Bamboo grove + temples → Kamakura. Trick Art + Chinatown + Cup Noodle → Yokohama.' },
+  { id: 'd-sp', q: 'Splurge hotel night — yes, no, or two?',
+    body: 'Aman Tokyo / Hoshinoya Tokyo / extra-special ryokan in Hakone are the candidates.' },
+  { id: 'd-gh', q: 'Ghibli Museum — flag the booking date?',
+    body: 'Tickets release at 10:00 JST exactly 1 month before visit date. Want me to confirm dates and remind?' },
+  { id: 'd-td', q: 'Tokyo Dome baseball — check schedule?',
+    body: 'Want me to verify Yomiuri Giants home schedule for Sep 12–26?' },
+];
+
+/* ----------------------------- HELPERS ----------------------------- */
+
+function pickEmoji(exp) {
+  const n = exp.name.toLowerCase();
+  if (/sushi|omakase|tsukiji|toyosu/.test(n)) return '🍣';
+  if (/ramen/.test(n)) return '🍜';
+  if (/tempura/.test(n)) return '🍤';
+  if (/yakitori|skewer|chanko/.test(n)) return '🍢';
+  if (/wagyu|yakiniku|steak|beef/.test(n)) return '🥩';
+  if (/curry/.test(n)) return '🍛';
+  if (/coffee|café|cafe|kissaten/.test(n)) return '☕';
+  if (/bar |golden gai|cocktail|izakaya|benfiddich|high five|lemon sour|drink/.test(n)) return '🍶';
+  if (/sumo|kokugikan/.test(n)) return '🤼';
+  if (/shrine|sensō|sensoji|jingu|temple|kannon|kotoku|jinja|imado|kanda myō|daijingu|gōtokuji|toshogu/.test(n)) return '⛩️';
+  if (/sky|tower|observ|gov\'t|metro|skytree|view|deck/.test(n)) return '🌆';
+  if (/aquarium|whale|fish/.test(n)) return '🐠';
+  if (/garden|park|gyoen|rikugien|chinzanso|hamarikyu|hama|hibiya|midtown|yoyogi|sumida park/.test(n)) return '🌳';
+  if (/onsen|sento|spa|laqua|sakura-yu/.test(n)) return '♨️';
+  if (/pokem|nintendo|joypolis|arcade|gigo|round 1|jump|capcom|game/.test(n)) return '🎮';
+  if (/cat /.test(n)) return '🐱';
+  if (/beach|kerama|blue cave|dive|scuba|kouri|cape|manza|hedo|ocean/.test(n)) return '🏖️';
+  if (/disney|disneyland/.test(n)) return '🏰';
+  if (/teamlab|planets|borderless/.test(n)) return '✨';
+  if (/baseball|dome|giants/.test(n)) return '⚾';
+  if (/cooking|class/.test(n)) return '🍳';
+  if (/scramble|crossing|takeshita|cat street|kabukicho|omoide|hoppy|kokusai/.test(n)) return '🌃';
+  if (/depachika|market|don quijote|donki|bicqlo|isetan|kappabashi|yodobashi|mandarake|animate|shopping|mall|solamachi|ginza six|character|kokusai|tsuboya/.test(n)) return '🛍️';
+  if (/museum|ghibli|mori|design|nezu|pola|venetian|open-air/.test(n)) return '🖼️';
+  if (/godzilla|samurai|show/.test(n)) return '🎬';
+  if (/watch|knot/.test(n)) return '⌚';
+  if (/chopstick/.test(n)) return '🥢';
+  if (/kintsugi|pottery/.test(n)) return '🏺';
+  if (/lake ashi|pirate|cruise|yakatabune|rainbow bridge/.test(n)) return '⛴️';
+  if (/fuji|kawaguchi|takao|mt /.test(n)) return '🗻';
+  if (/nikko|waterfall/.test(n)) return '💧';
+  if (/kamakura|enoshima/.test(n)) return '🌊';
+  if (/owakudani|sulfur|volcan/.test(n)) return '🌋';
+  if (/gundam/.test(n)) return '🤖';
+  if (/planetarium|sky circus/.test(n)) return '🌌';
+  if (/maid/.test(n)) return '🎀';
+  if (/pineapple/.test(n)) return '🍍';
+  if (/shimokitazawa|yanaka|kagurazaka|sangenjaya|nakameguro|t-site|hidden/.test(n)) return '🏘️';
+  if (/bakery|kaiseki/.test(n)) return '🍱';
+  if (/head spa/.test(n)) return '💆';
+  if (/american village|mihama/.test(n)) return '🎡';
+  if (/bios|jungle/.test(n)) return '🌴';
+  if (/sefa/.test(n)) return '🪨';
+  if (/shuri/.test(n)) return '🏯';
+  return '📍';
+}
+
+/* Curated Wikipedia article titles for iconic experiences. The rest fall back
+   to Wikipedia search keyed by experience name. */
+const WIKI_TITLES = {
+  'shib-scramble': 'Shibuya_Crossing', 'shib-sky': 'Shibuya_Sky', 'shib-meiji': 'Meiji_Shrine',
+  'shib-yoyogi': 'Yoyogi_Park', 'shib-takeshita': 'Takeshita_Street', 'shib-omotesando': 'Omotesandō',
+  'shib-donki': 'Don_Quijote_(retailer)',
+  'shi-gyoen': 'Shinjuku_Gyoen', 'shi-metro': 'Tokyo_Metropolitan_Government_Building',
+  'shi-isetan': 'Isetan', 'shi-omoide': 'Omoide_Yokocho', 'shi-golden': 'Golden_Gai',
+  'shi-kabukicho': 'Kabukichō', 'shi-daijingu': 'Tokyo_Daijingu',
+  'asa-sensoji': 'Sensō-ji', 'asa-imado': 'Imado_Shrine', 'asa-kappabashi': 'Kappabashi-dōri',
+  'asa-sumida-walk': 'Sumida_River', 'asa-skytree': 'Tokyo_Skytree',
+  'asa-aquarium': 'Sumida_Aquarium', 'asa-solamachi': 'Tokyo_Skytree',
+  'asa-sumo': 'Ryōgoku_Kokugikan', 'asa-sumo-museum': 'Sumo_Museum',
+  'asa-yakatabune': 'Yakatabune', 'asa-chopsticks': 'Chopsticks', 'asa-kintsugi': 'Kintsugi',
+  'aki-yodobashi': 'Yodobashi_Camera', 'aki-mandarake': 'Mandarake',
+  'aki-maid': 'Maid_café', 'aki-kanda': 'Kanda_Shrine',
+  'gin-tsukiji': 'Tsukiji_Outer_Market', 'gin-teamlab-planets': 'TeamLab',
+  'gin-toyosu-market': 'Toyosu_Market', 'gin-six': 'Ginza',
+  'gin-station-night': 'Tokyo_Station', 'gin-hamarikyu': 'Hamarikyū_Gardens',
+  'gin-hibiya': 'Hibiya_Park',
+  'rop-teamlab-border': 'TeamLab', 'rop-mori': 'Mori_Art_Museum',
+  'rop-midtown': 'Tokyo_Midtown', 'rop-azabudai': 'Azabudai_Hills',
+  'rop-design': '21_21_Design_Sight',
+  'ike-aqua': 'Sunshine_Aquarium', 'ike-animate': 'Animate_(store)',
+  'ike-skycircus': 'Sunshine_60',
+  'hid-gotokuji': 'Gōtoku-ji', 'hid-shimokita': 'Shimokitazawa',
+  'hid-nakameguro': 'Meguro_River', 'hid-yanaka': 'Yanaka,_Tokyo',
+  'hid-kagurazaka': 'Kagurazaka', 'hid-sangenjaya': 'Sangenjaya',
+  'hid-nezu': 'Nezu_Museum',
+  'oda-joypolis': 'Joypolis', 'oda-gundam': 'Unicorn_Gundam_statue',
+  'oda-rainbow': 'Rainbow_Bridge_(Tokyo)',
+  'ext-rikugien': 'Rikugi-en', 'ext-chinzanso': 'Hotel_Chinzanso_Tokyo',
+  'ext-disneysea': 'Tokyo_DisneySea', 'ext-mttakao': 'Mount_Takao',
+  'ext-ghibli': 'Ghibli_Museum', 'ext-tokyodome': 'Tokyo_Dome',
+  'ext-sushi-class': 'Sushi', 'ext-ramen-class': 'Ramen',
+  'ext-sento': 'Sentō', 'ext-laqua': 'Tokyo_Dome_City',
+  'hak-openair': 'Hakone_Open-Air_Museum', 'hak-owakudani': 'Ōwakudani',
+  'hak-pirate': 'Lake_Ashi', 'hak-shrine': 'Hakone_Shrine',
+  'hak-pola': 'Pola_Museum_of_Art', 'hak-venetian': 'Hakone_Glass_Forest_Museum',
+  'hak-onsen': 'Onsen', 'hak-kaiseki': 'Kaiseki', 'hak-bakery': 'Lake_Ashi',
+  'oki-kokusai': 'Kokusai_Street', 'oki-tsuboya': 'Tsuboya_pottery',
+  'oki-shuri': 'Shuri_Castle', 'oki-sefa': 'Sefa-utaki',
+  'oki-bluecave': 'Cape_Maeda', 'oki-kerama': 'Kerama_Islands',
+  'oki-manza': 'Cape_Manzamo', 'oki-churaumi': 'Okinawa_Churaumi_Aquarium',
+  'oki-kouri': 'Kouri_Island', 'oki-hedo': 'Cape_Hedo',
+  'dt-yokohama': 'Minato_Mirai_21', 'dt-kamakura': 'Kōtoku-in',
+  'dt-kawaguchi': 'Lake_Kawaguchi', 'dt-nikko': 'Nikkō_Tōshō-gū',
+  'dt-enoshima': 'Enoshima',
+};
+
+const imgCache = {};
+async function cached(key, fn) {
+  if (key in imgCache) return imgCache[key];
+  try { return imgCache[key] = await fn(); }
+  catch (e) { return imgCache[key] = null; }
+}
+
+function expSearchTerms(exp) {
+  const region = exp.area && /Okinawa/i.test(exp.area) ? 'Okinawa Japan'
+    : exp.area && /Hakone/i.test(exp.area) ? 'Hakone Japan'
+    : 'Tokyo Japan';
+  return `${exp.name} ${region}`;
+}
+
+async function fetchWikipediaImage(exp) {
+  const wiki = WIKI_TITLES[exp.id];
+  if (wiki) {
+    const src = await cached('wp:title:' + wiki, async () => {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.thumbnail?.source || data.originalimage?.source || null;
+    });
+    if (src) return src;
+  }
+  const q = expSearchTerms(exp);
+  return cached('wp:search:' + q, async () => {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=480&origin=*`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = data.query?.pages;
+    if (!pages) return null;
+    return Object.values(pages)[0]?.thumbnail?.source || null;
+  });
+}
+
+async function fetchCommonsImage(exp) {
+  const q = expSearchTerms(exp);
+  return cached('cm:' + q, async () => {
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=480&origin=*`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = data.query?.pages;
+    if (!pages) return null;
+    const info = Object.values(pages)[0]?.imageinfo?.[0];
+    return info?.thumburl || info?.url || null;
+  });
+}
+
+async function fetchOpenverseImage(exp) {
+  const q = expSearchTerms(exp);
+  return cached('ov:' + q, async () => {
+    const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=1`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const r = data.results?.[0];
+    return r?.thumbnail || r?.url || null;
+  });
+}
+
+async function fetchFlickrImage(exp) {
+  const kw = encodeURIComponent((exp.name + ',' + (exp.area || '') + ',japan').toLowerCase().replace(/\s+/g, ','));
+  return `https://loremflickr.com/480/240/${kw}?lock=${Math.abs(hashStr(exp.id)) % 1000}`;
+}
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return h;
+}
+
+const IMAGE_SOURCES = {
+  wikipedia: { label: 'Wikipedia', fetch: fetchWikipediaImage },
+  commons:   { label: 'Wikimedia Commons', fetch: fetchCommonsImage },
+  openverse: { label: 'Openverse (CC)', fetch: fetchOpenverseImage },
+  flickr:    { label: 'Loremflickr', fetch: fetchFlickrImage },
+  none:      { label: 'Emoji only', fetch: async () => null },
+};
+
+async function lazyLoadCardImage(cardEl, exp) {
+  const wrap = cardEl.querySelector('.card-img');
+  if (!wrap || wrap.dataset.loaded === '1') return;
+  const source = state.imageSource || 'wikipedia';
+  wrap.dataset.loaded = '1';
+  if (source === 'none') return;
+  const fn = IMAGE_SOURCES[source]?.fetch;
+  if (!fn) return;
+  let src = null;
+  try { src = await fn(exp); } catch (e) { src = null; }
+  if (!src) return;
+  const img = document.createElement('img');
+  img.alt = '';
+  img.loading = 'lazy';
+  img.style.opacity = '0';
+  img.onload = () => { img.style.opacity = '1'; };
+  img.onerror = () => img.remove();
+  img.src = src;
+  wrap.appendChild(img);
+}
+
+let imageObserver;
+function setupImageObserver() {
+  if (imageObserver) imageObserver.disconnect();
+  imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        const exp = EXPERIENCES.find(e => e.id === card.dataset.id);
+        if (exp) lazyLoadCardImage(card, exp);
+        imageObserver.unobserve(card);
+      }
+    });
+  }, { rootMargin: '250px' });
+}
+function observeCards(root) {
+  root.querySelectorAll('.card[data-id]').forEach(c => imageObserver.observe(c));
+}
+
+/* ----------------------------- STATE ----------------------------- */
+
+const STORAGE_KEY = 'jptrip-picks-v1';
+const IMGSRC_KEY = 'jptrip-imgsrc';
+let state = {
+  picks: {},
+  filters: { area: 'all', effort: 'all', exh: 'all', reserve: 'all', search: '' },
+  foodFilters: { area: 'all', meal: 'all' },
+  dragId: null,
+  modalForId: null,
+  imageSource: 'wikipedia',
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state.picks = JSON.parse(raw);
+  } catch (e) { console.warn('Failed to load picks:', e); }
+  try {
+    const src = localStorage.getItem(IMGSRC_KEY);
+    if (src && IMAGE_SOURCES[src]) state.imageSource = src;
+  } catch (e) {}
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.picks));
+}
+function saveImageSource() {
+  try { localStorage.setItem(IMGSRC_KEY, state.imageSource); } catch (e) {}
+}
+
+/* ----------------------------- RENDER ----------------------------- */
+
+function exhClass(exh) {
+  if (exh === 'Very High') return 'Very';
+  return exh;
+}
+
+function expCardHTML(exp) {
+  const picked = !!state.picks[exp.id];
+  const emoji = pickEmoji(exp);
+  const grad = AREA_GRADIENT[exp.area] || 'linear-gradient(135deg, #d4d4d4, #f0f0f0)';
+  return `
+    <div class="card ${picked ? 'picked' : ''}" data-id="${exp.id}">
+      <div class="card-img" style="background: ${grad};">
+        <span class="card-img-emoji">${emoji}</span>
+        <span class="card-img-corner">${exp.area}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${exp.name}</div>
+        <div class="card-meta">
+          <span class="badge effort-${exp.effort}">Effort ${exp.effort}</span>
+          <span class="badge exh-${exhClass(exp.exh)}">${exp.exh}</span>
+          <span class="badge">${exp.time}</span>
+          ${exp.reserve === 'Yes' ? '<span class="badge reserve">Reserve</span>' : ''}
+          ${exp.reserve === 'Rec' ? '<span class="badge" style="border-color:var(--accent);color:var(--accent);">Recommended</span>' : ''}
+        </div>
+        <div class="card-why">${exp.why}</div>
+        <div class="card-actions">
+          ${picked
+            ? `<button class="btn danger" data-action="remove" data-id="${exp.id}">Remove</button>`
+            : `<button class="btn primary" data-action="add" data-id="${exp.id}">+ Add to my trip</button>`}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderExperiences() {
+  const f = state.filters;
+  const list = EXPERIENCES.filter(e => {
+    if (f.area !== 'all' && e.area !== f.area) return false;
+    if (f.effort !== 'all' && String(e.effort) !== f.effort) return false;
+    if (f.exh !== 'all' && e.exh !== f.exh) return false;
+    if (f.reserve !== 'all') {
+      if (f.reserve === 'Yes' && e.reserve !== 'Yes' && e.reserve !== 'Rec') return false;
+      if (f.reserve === 'No' && (e.reserve === 'Yes' || e.reserve === 'Rec')) return false;
+    }
+    if (f.search) {
+      const s = f.search.toLowerCase();
+      const blob = (e.name + ' ' + e.area + ' ' + e.why).toLowerCase();
+      if (!blob.includes(s)) return false;
+    }
+    return true;
+  });
+  const grid = document.getElementById('expGrid');
+  grid.innerHTML = list.map(expCardHTML).join('');
+  document.getElementById('expCount').textContent = `${list.length} experience${list.length === 1 ? '' : 's'} shown`;
+  observeCards(grid);
+}
+
+function renderFood() {
+  const f = state.foodFilters;
+  const list = FOOD.filter(item => {
+    if (f.area !== 'all' && item.area !== f.area) return false;
+    if (f.meal !== 'all' && item.meal !== f.meal) return false;
+    return true;
+  });
+  document.getElementById('foodGrid').innerHTML = list.map(item => `
+    <div class="food-card">
+      <div class="food-meal">${item.meal} · ${item.area}</div>
+      <div class="food-name">${item.name}</div>
+      ${item.note ? `<div class="food-note">${item.note}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderCombos() {
+  document.getElementById('comboList').innerHTML = COMBOS.map(c => `
+    <div class="combo-card">
+      <div class="combo-head">
+        <div class="combo-title">Combo ${c.id.toUpperCase()} — ${c.title}</div>
+        <div class="combo-stats">
+          <span class="badge effort-${c.effort}">Effort ${c.effort}</span>
+          <span class="badge exh-${exhClass(c.exh)}">${c.exh}</span>
+          <span class="badge">Walking ${c.walking}</span>
+        </div>
+      </div>
+      <ul class="combo-list">
+        ${c.items.map(i => `<li>${i}</li>`).join('')}
+      </ul>
+      <div class="combo-desc">${c.desc}</div>
+    </div>
+  `).join('');
+}
+
+function pickChipHTML(exp) {
+  const emoji = pickEmoji(exp);
+  const needsReserve = (exp.reserve === 'Yes' || exp.reserve === 'Rec');
+  return `
+    <div class="pick-chip" draggable="true" data-id="${exp.id}">
+      <span class="pick-chip-emoji">${emoji}</span>
+      <div class="pick-chip-body">
+        <div class="pick-chip-name">${exp.name}</div>
+        <div class="pick-chip-meta">${exp.area} · ${exp.time}${needsReserve ? ' · <span class="reserve">Reserve</span>' : ''}</div>
+      </div>
+      <button class="pick-chip-remove" data-action="remove" data-id="${exp.id}" title="Remove">×</button>
+    </div>
+  `;
+}
+
+function renderMyTrip() {
+  const picks = Object.entries(state.picks);
+  const total = picks.length;
+  const assigned = picks.filter(([, v]) => v.dayIdx > 0).length;
+  const needsReserve = picks.filter(([id]) => {
+    const e = EXPERIENCES.find(x => x.id === id);
+    return e && (e.reserve === 'Yes' || e.reserve === 'Rec');
+  }).length;
+
+  document.getElementById('statPicks').textContent = total;
+  document.getElementById('statAssigned').textContent = assigned;
+  document.getElementById('statReserve').textContent = needsReserve;
+  updatePickCount();
+
+  const root = document.getElementById('myTrip');
+  if (total === 0) {
+    root.innerHTML = `
+      <div class="empty">
+        No picks yet. Head to <strong>Experiences</strong> and tap "+ Add to my trip" on anything that calls to you.
+      </div>`;
+    return;
+  }
+
+  const byDay = {};
+  DAYS.forEach(d => byDay[d.idx] = []);
+  picks.forEach(([id, v]) => {
+    const e = EXPERIENCES.find(x => x.id === id);
+    if (e) byDay[v.dayIdx || 0].push(e);
+  });
+
+  root.innerHTML = `
+    <div class="day-board">
+      ${DAYS.map(day => {
+        const items = byDay[day.idx] || [];
+        const isUnassigned = day.idx === 0;
+        return `
+          <div class="day-block ${isUnassigned ? 'unassigned' : ''}" data-day="${day.idx}">
+            <div class="day-head">
+              <div>
+                <div class="day-label">${day.label}</div>
+                <div class="day-sub">${day.sub}</div>
+              </div>
+              <div class="day-count">${items.length} pick${items.length === 1 ? '' : 's'}</div>
+            </div>
+            <div class="day-picks">
+              ${items.length === 0
+                ? `<div class="day-drop-hint">Drop here</div>`
+                : items.map(pickChipHTML).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderReservations() {
+  const picksNeedingRes = Object.entries(state.picks)
+    .map(([id]) => EXPERIENCES.find(e => e.id === id))
+    .filter(e => e && (e.reserve === 'Yes' || e.reserve === 'Rec'));
+
+  const list = document.getElementById('resList');
+  if (picksNeedingRes.length === 0) {
+    list.innerHTML = `
+      <div class="res-empty">
+        Nothing to reserve yet. Pick experiences marked <strong>Reserve</strong> or <strong>Recommended</strong>
+        in the <em>Experiences</em> tab and they'll appear here, ranked by urgency.
+      </div>`;
+    return;
+  }
+
+  const rows = picksNeedingRes.map(e => {
+    const guide = RES_GUIDE[e.id] || { prio: 99, when: 'Book in advance', note: '' };
+    return { exp: e, ...guide };
+  }).sort((a, b) => a.prio - b.prio);
+
+  list.innerHTML = rows.map((r, i) => `
+    <div class="reservation-row">
+      <div class="reservation-num">${i + 1}</div>
+      <div class="reservation-body">
+        <div class="reservation-what">${r.exp.name}</div>
+        <div class="reservation-when">${r.when}</div>
+        ${r.note ? `<div class="reservation-note">${r.note}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function getDecisions() {
+  try {
+    const raw = localStorage.getItem('jptrip-decisions-v1');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return DEFAULT_DECISIONS.slice();
+}
+function saveDecisions(arr) {
+  localStorage.setItem('jptrip-decisions-v1', JSON.stringify(arr));
+}
+
+function renderDecisions() {
+  const decisions = getDecisions();
+  const list = document.getElementById('decList');
+  if (decisions.length === 0) {
+    list.innerHTML = `<div class="empty">No decisions yet. Add one above.</div>`;
+    return;
+  }
+  list.innerHTML = decisions.map((d, i) => `
+    <details class="decision-row">
+      <summary>
+        <div class="decision-num">${i + 1}</div>
+        <strong>${d.q}</strong>
+        <button class="decision-delete" data-action="deleteDecision" data-id="${d.id}" title="Delete">×</button>
+      </summary>
+      ${d.body ? `<div class="decision-body">${d.body}</div>` : ''}
+    </details>
+  `).join('');
+}
+
+/* ----------------------------- FILTERS / TABS ----------------------------- */
+
+function populateAreaSelects() {
+  const areaSel = document.getElementById('filterArea');
+  AREAS.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    areaSel.appendChild(opt);
+  });
+  const foodAreaSel = document.getElementById('filterFoodArea');
+  [...new Set(FOOD.map(f => f.area))].forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    foodAreaSel.appendChild(opt);
+  });
+}
+
+function syncFilterUI() {
+  const expSelects = [
+    ['filterArea', state.filters.area],
+    ['filterEffort', state.filters.effort],
+    ['filterExh', state.filters.exh],
+    ['filterReserve', state.filters.reserve],
+  ];
+  let expActive = 0;
+  expSelects.forEach(([id, v]) => {
+    const el = document.getElementById(id);
+    el.value = v;
+    if (v !== 'all') { el.classList.add('has-value'); expActive++; }
+    else el.classList.remove('has-value');
+  });
+  document.getElementById('clearFilters').hidden = (expActive === 0 && !state.filters.search);
+  const foodSelects = [
+    ['filterFoodArea', state.foodFilters.area],
+    ['filterMeal', state.foodFilters.meal],
+  ];
+  let foodActive = 0;
+  foodSelects.forEach(([id, v]) => {
+    const el = document.getElementById(id);
+    el.value = v;
+    if (v !== 'all') { el.classList.add('has-value'); foodActive++; }
+    else el.classList.remove('has-value');
+  });
+  document.getElementById('clearFoodFilters').hidden = (foodActive === 0);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.sidenav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === name));
+  ['experiences', 'food', 'combos', 'mytrip', 'reservations', 'decisions'].forEach(t => {
+    document.getElementById('tab-' + t).hidden = (t !== name);
+  });
+  if (name === 'mytrip') renderMyTrip();
+  if (name === 'food') renderFood();
+  if (name === 'combos') renderCombos();
+  if (name === 'reservations') renderReservations();
+  if (name === 'decisions') renderDecisions();
+  // Close mobile sidebar after tab change
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+function updatePickCount() {
+  const n = Object.keys(state.picks).length;
+  document.getElementById('pickCount').textContent = n ? n : '';
+}
+
+/* ----------------------------- DAY PICKER MODAL (touch fallback) ----------------------------- */
+
+function openDayPicker(expId) {
+  const exp = EXPERIENCES.find(e => e.id === expId);
+  if (!exp) return;
+  state.modalForId = expId;
+  document.getElementById('dayModalTitle').textContent = `Assign "${exp.name}" to:`;
+  const currentDay = state.picks[expId]?.dayIdx ?? 0;
+  document.getElementById('dayModalBody').innerHTML = DAYS.map(d => `
+    <button class="modal-day-btn ${d.idx === currentDay ? 'selected' : ''}"
+            data-action="setDay" data-day="${d.idx}">
+      <strong>${d.label}</strong><br>
+      <span style="font-size:12px; color:var(--muted);">${d.sub}</span>
+    </button>
+  `).join('');
+  document.getElementById('dayModal').classList.add('open');
+}
+
+function closeDayPicker() {
+  document.getElementById('dayModal').classList.remove('open');
+  state.modalForId = null;
+}
+
+/* ----------------------------- EVENT HANDLERS ----------------------------- */
+
+document.addEventListener('click', (e) => {
+  const navBtn = e.target.closest('.sidenav button');
+  if (navBtn) { switchTab(navBtn.dataset.tab); return; }
+
+  const action = e.target.closest('[data-action]');
+  if (action) {
+    e.stopPropagation();
+    const a = action.dataset.action;
+    const id = action.dataset.id;
+    if (a === 'add') {
+      state.picks[id] = { dayIdx: 0, addedAt: Date.now() };
+      saveState();
+      renderExperiences();
+      updatePickCount();
+    } else if (a === 'remove') {
+      delete state.picks[id];
+      saveState();
+      renderExperiences();
+      renderMyTrip();
+      updatePickCount();
+    } else if (a === 'closeModal') {
+      closeDayPicker();
+    } else if (a === 'setDay') {
+      const newDay = parseInt(action.dataset.day, 10);
+      if (state.modalForId && state.picks[state.modalForId]) {
+        state.picks[state.modalForId].dayIdx = newDay;
+        saveState();
+        renderMyTrip();
+      }
+      closeDayPicker();
+    } else if (a === 'deleteDecision') {
+      const list = getDecisions().filter(d => d.id !== id);
+      saveDecisions(list);
+      renderDecisions();
+    }
+    return;
+  }
+
+  // Tap on pick-chip body (not remove button) → open day picker (mobile-friendly)
+  const chipEl = e.target.closest('.pick-chip');
+  if (chipEl && !e.target.closest('.pick-chip-remove')) {
+    openDayPicker(chipEl.dataset.id);
+    return;
+  }
+
+  // Tap outside modal backdrop
+  if (e.target.id === 'dayModal') closeDayPicker();
+});
+
+document.getElementById('search').addEventListener('input', (e) => {
+  state.filters.search = e.target.value.trim();
+  syncFilterUI();
+  renderExperiences();
+});
+
+/* Filter dropdowns */
+['filterArea', 'filterEffort', 'filterExh', 'filterReserve'].forEach(id => {
+  document.getElementById(id).addEventListener('change', (e) => {
+    const key = e.target.dataset.filter;
+    state.filters[key] = e.target.value;
+    syncFilterUI();
+    renderExperiences();
+  });
+});
+['filterFoodArea', 'filterMeal'].forEach(id => {
+  document.getElementById(id).addEventListener('change', (e) => {
+    const key = e.target.dataset.filter === 'foodArea' ? 'area' : 'meal';
+    state.foodFilters[key] = e.target.value;
+    syncFilterUI();
+    renderFood();
+  });
+});
+document.getElementById('clearFilters').addEventListener('click', () => {
+  state.filters = { area: 'all', effort: 'all', exh: 'all', reserve: 'all', search: '' };
+  document.getElementById('search').value = '';
+  syncFilterUI();
+  renderExperiences();
+});
+
+document.getElementById('imageSource').addEventListener('change', (e) => {
+  const v = e.target.value;
+  if (!IMAGE_SOURCES[v]) return;
+  state.imageSource = v;
+  saveImageSource();
+  // Reset image loaded flag on existing cards so the new source can populate them
+  document.querySelectorAll('.card-img[data-loaded="1"]').forEach(el => {
+    el.dataset.loaded = '';
+    el.querySelectorAll('img').forEach(i => i.remove());
+  });
+  renderExperiences();
+});
+document.getElementById('clearFoodFilters').addEventListener('click', () => {
+  state.foodFilters = { area: 'all', meal: 'all' };
+  syncFilterUI();
+  renderFood();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (confirm('Clear all picks? This cannot be undone.')) {
+    state.picks = {};
+    saveState();
+    renderMyTrip();
+    renderExperiences();
+    updatePickCount();
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const lines = ['# My Japan Trip — Picks', ''];
+  DAYS.forEach(day => {
+    const items = Object.entries(state.picks)
+      .filter(([, v]) => (v.dayIdx || 0) === day.idx)
+      .map(([id]) => EXPERIENCES.find(e => e.id === id))
+      .filter(Boolean);
+    if (items.length === 0) return;
+    lines.push(`## ${day.label} — ${day.sub}`);
+    items.forEach(e => {
+      lines.push(`- ${e.name} (${e.area}, Effort ${e.effort}, ${e.exh}, ${e.time}${(e.reserve === 'Yes' || e.reserve === 'Rec') ? ', RESERVE' : ''})`);
+    });
+    lines.push('');
+  });
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(
+    () => alert('Copied to clipboard.'),
+    () => {
+      const w = window.open();
+      w.document.write('<pre>' + text.replace(/</g, '&lt;') + '</pre>');
+    }
+  );
+});
+
+/* ----------------------------- DRAG & DROP ----------------------------- */
+
+document.addEventListener('dragstart', (e) => {
+  const chip = e.target.closest('.pick-chip');
+  if (!chip) return;
+  state.dragId = chip.dataset.id;
+  chip.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', chip.dataset.id); } catch (_) {}
+});
+
+document.addEventListener('dragend', (e) => {
+  const chip = e.target.closest('.pick-chip');
+  if (chip) chip.classList.remove('dragging');
+  document.querySelectorAll('.day-block.drag-over').forEach(b => b.classList.remove('drag-over'));
+  state.dragId = null;
+});
+
+document.addEventListener('dragover', (e) => {
+  const block = e.target.closest('.day-block');
+  if (!block) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.day-block.drag-over').forEach(b => {
+    if (b !== block) b.classList.remove('drag-over');
+  });
+  block.classList.add('drag-over');
+});
+
+document.addEventListener('dragleave', (e) => {
+  const block = e.target.closest('.day-block');
+  if (block && !block.contains(e.relatedTarget)) {
+    block.classList.remove('drag-over');
+  }
+});
+
+document.addEventListener('drop', (e) => {
+  const block = e.target.closest('.day-block');
+  if (!block) return;
+  e.preventDefault();
+  const id = state.dragId || e.dataTransfer.getData('text/plain');
+  const newDay = parseInt(block.dataset.day, 10);
+  if (id && state.picks[id]) {
+    state.picks[id].dayIdx = newDay;
+    saveState();
+    renderMyTrip();
+  }
+});
+
+/* ----------------------------- MOBILE SIDEBAR ----------------------------- */
+
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+});
+
+/* Add decision */
+document.getElementById('addDecisionBtn').addEventListener('click', () => {
+  const qEl = document.getElementById('newDecisionQ');
+  const bEl = document.getElementById('newDecisionBody');
+  const q = qEl.value.trim();
+  if (!q) { qEl.focus(); return; }
+  const list = getDecisions();
+  list.push({ id: 'd-' + Date.now().toString(36), q, body: bEl.value.trim() });
+  saveDecisions(list);
+  qEl.value = ''; bEl.value = '';
+  renderDecisions();
+});
+document.getElementById('newDecisionQ').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('addDecisionBtn').click();
+});
+document.getElementById('newDecisionBody').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('addDecisionBtn').click();
+});
+
+/* ----------------------------- INIT ----------------------------- */
+
+loadState();
+populateAreaSelects();
+syncFilterUI();
+setupImageObserver();
+const imgSelect = document.getElementById('imageSource');
+if (imgSelect) imgSelect.value = state.imageSource;
+renderExperiences();
+updatePickCount();
+</script>
+</body>
+</html>
