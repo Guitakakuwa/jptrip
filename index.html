@@ -1134,33 +1134,58 @@ let state = {
   imageSource: 'wikipedia',
 };
 
+function setStatus(msg, ok = true) {
+  let el = document.getElementById('fb-status');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fb-status';
+    el.style.cssText = 'position:fixed;bottom:12px;right:12px;padding:6px 12px;border-radius:8px;font-size:12px;z-index:999;transition:opacity 1s';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = ok ? '#2f7a3c' : '#b3121f';
+  el.style.color = '#fff';
+  el.style.opacity = '1';
+  if (ok) setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+
 async function loadState() {
   try {
     const [stateSnap, decsSnap] = await Promise.all([
       getDoc(STATE_REF).catch(() => null),
       getDoc(DECISIONS_REF).catch(() => null),
     ]);
+
     if (stateSnap?.exists()) {
       const d = stateSnap.data();
       if (d.picks) state.picks = d.picks;
       if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
+    } else {
+      // Seed empty state so onSnapshot fires for all clients
+      setDoc(STATE_REF, { picks: {}, imageSource: 'wikipedia' }).catch(() => {});
     }
-    state.decisions = (decsSnap?.exists() && Array.isArray(decsSnap.data().items))
-      ? decsSnap.data().items
-      : DEFAULT_DECISIONS.slice();
+
+    if (decsSnap?.exists() && Array.isArray(decsSnap.data().items)) {
+      state.decisions = decsSnap.data().items;
+    } else {
+      state.decisions = DEFAULT_DECISIONS.slice();
+      setDoc(DECISIONS_REF, { items: state.decisions }).catch(() => {});
+    }
+
     renderExperiences();
     renderDecisions();
     updatePickCount();
     const imgSel = document.getElementById('imageSource');
     if (imgSel) imgSel.value = state.imageSource;
+    setStatus('🔥 Firebase connected');
   } catch (e) {
     console.warn('Firebase initial load failed:', e);
+    setStatus('⚠️ Firebase offline — changes won\'t sync', false);
   }
 
   try {
     onSnapshot(STATE_REF, (snap) => {
-      if (!snap.exists()) return;
-      const d = snap.data();
+      const d = snap.exists() ? snap.data() : {};
       state.picks = d.picks || {};
       if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
       renderExperiences();
@@ -1175,6 +1200,7 @@ async function loadState() {
     });
   } catch (e) {
     console.warn('Firebase listeners failed:', e);
+    setStatus('⚠️ Firebase offline — changes won\'t sync', false);
   }
 }
 
