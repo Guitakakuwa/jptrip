@@ -316,6 +316,19 @@
   }
   .modal-day-btn:hover, .modal-day-btn.selected { background: var(--accent-soft); border-color: var(--accent); }
 
+  /* Custom pick chips */
+  .pick-chip.custom { background: #f0f7ff; border-color: #b8d4f0; }
+
+  /* Add-custom modal form */
+  .custom-form { display: flex; flex-direction: column; gap: 12px; }
+  .custom-form label { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .custom-form input, .custom-form select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 7px; font: inherit; font-size: 13.5px; background: var(--bg); color: var(--text);
+  }
+  .custom-form input:focus, .custom-form select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .custom-form .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
   @media (max-width: 800px) {
     aside.sidebar {
       transform: translateX(-100%); transition: transform .2s ease;
@@ -443,6 +456,7 @@
       <div class="stat"><strong id="statAssigned">0</strong>scheduled</div>
       <div class="stat"><strong id="statReserve">0</strong>need reserve</div>
       <div style="flex:1;"></div>
+      <button class="btn primary" id="addCustomBtn">+ Add custom</button>
       <button class="btn" id="exportBtn">Export as text</button>
       <button class="btn danger" id="clearBtn">Clear all</button>
     </div>
@@ -469,6 +483,47 @@
   </section>
 
 </main>
+</div>
+
+<!-- Add custom pick modal -->
+<div class="modal-backdrop" id="customPickModal">
+  <div class="modal">
+    <h3>Add custom entry</h3>
+    <div class="custom-form">
+      <div>
+        <label for="cpName">Name *</label>
+        <input type="text" id="cpName" placeholder="e.g. Kissa Ginza" />
+      </div>
+      <div>
+        <label for="cpCategory">Category</label>
+        <select id="cpCategory">
+          <option value="Restaurant">🍽️ Restaurant</option>
+          <option value="Café">☕ Café</option>
+          <option value="Bar">🍶 Bar</option>
+          <option value="Shop">🛍️ Shop</option>
+          <option value="Other">📍 Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="cpArea">Area (optional)</label>
+        <select id="cpArea">
+          <option value="">— Any area —</option>
+        </select>
+      </div>
+      <div>
+        <label for="cpNote">Note (optional)</label>
+        <input type="text" id="cpNote" placeholder="e.g. Try the coffee float" />
+      </div>
+      <div>
+        <label for="cpDay">Assign to day (optional)</label>
+        <select id="cpDay"></select>
+      </div>
+      <div class="form-actions">
+        <button class="btn" id="closeCustomModal">Cancel</button>
+        <button class="btn primary" id="saveCustomPick">Add to trip</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Mobile day picker modal (touch fallback for drag-drop) -->
@@ -838,12 +893,12 @@ const DAYS = [
   { idx: 3, label: 'Day 3 · Sep 14 Mon', sub: 'Tokyo Pt 1 — Sumo opens' },
   { idx: 4, label: 'Day 4 · Sep 15 Tue', sub: 'Tokyo Pt 1' },
   { idx: 5, label: 'Day 5 · Sep 16 Wed', sub: 'Tokyo Pt 1' },
-  { idx: 6, label: 'Day 6 · Sep 17 Thu', sub: 'Tokyo Pt 1' },
-  { idx: 7, label: 'Day 7 · Sep 18 Fri', sub: 'Hakone ryokan (overnight)' },
-  { idx: 8, label: 'Day 8 · Sep 19 Sat', sub: 'Hakone → Tokyo' },
-  { idx: 9, label: 'Day 9 · Sep 20 Sun', sub: 'Fly to Okinawa' },
-  { idx: 10, label: 'Day 10 · Sep 21 Mon', sub: 'Okinawa (Silver Week holiday)' },
-  { idx: 11, label: 'Day 11 · Sep 22 Tue', sub: 'Okinawa → Tokyo (evening)' },
+  { idx: 6, label: 'Day 6 · Sep 17 Thu', sub: 'Fly to Okinawa' },
+  { idx: 7, label: 'Day 7 · Sep 18 Fri', sub: 'Okinawa' },
+  { idx: 8, label: 'Day 8 · Sep 19 Sat', sub: 'Okinawa' },
+  { idx: 9, label: 'Day 9 · Sep 20 Sun', sub: 'Okinawa — last day' },
+  { idx: 10, label: 'Day 10 · Sep 21 Mon', sub: 'Okinawa → Tokyo (Silver Week holiday)' },
+  { idx: 11, label: 'Day 11 · Sep 22 Tue', sub: 'Tokyo Pt 2' },
   { idx: 12, label: 'Day 12 · Sep 23 Wed', sub: 'Tokyo Pt 2 (Autumn Equinox holiday)' },
   { idx: 13, label: 'Day 13 · Sep 24 Thu', sub: 'Tokyo Pt 2' },
   { idx: 14, label: 'Day 14 · Sep 25 Fri', sub: 'Tokyo Pt 2' },
@@ -1126,6 +1181,7 @@ function observeCards(root) {
 
 let state = {
   picks: {},
+  customPicks: {},
   decisions: [],
   filters: { area: 'all', effort: 'all', exh: 'all', reserve: 'all', search: '' },
   foodFilters: { area: 'all', meal: 'all' },
@@ -1159,10 +1215,11 @@ async function loadState() {
     if (stateSnap?.exists()) {
       const d = stateSnap.data();
       if (d.picks) state.picks = d.picks;
+      if (d.customPicks) state.customPicks = d.customPicks;
       if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
     } else {
       // Seed empty state so onSnapshot fires for all clients
-      setDoc(STATE_REF, { picks: {}, imageSource: 'wikipedia' }).catch(() => {});
+      setDoc(STATE_REF, { picks: {}, customPicks: {}, imageSource: 'wikipedia' }).catch(() => {});
     }
 
     if (decsSnap?.exists() && Array.isArray(decsSnap.data().items)) {
@@ -1187,6 +1244,7 @@ async function loadState() {
     onSnapshot(STATE_REF, (snap) => {
       const d = snap.exists() ? snap.data() : {};
       state.picks = d.picks || {};
+      state.customPicks = d.customPicks || {};
       if (d.imageSource && IMAGE_SOURCES[d.imageSource]) state.imageSource = d.imageSource;
       renderExperiences();
       renderMyTrip();
@@ -1205,7 +1263,7 @@ async function loadState() {
 }
 
 function saveState() {
-  setDoc(STATE_REF, { picks: state.picks }, { merge: true })
+  setDoc(STATE_REF, { picks: state.picks, customPicks: state.customPicks }, { merge: true })
     .catch(e => console.warn('Save failed:', e));
 }
 function saveImageSource() {
@@ -1323,10 +1381,35 @@ function pickChipHTML(exp) {
   `;
 }
 
+function customPickEmoji(cat) {
+  if (cat === 'Café') return '☕';
+  if (cat === 'Bar') return '🍶';
+  if (cat === 'Shop') return '🛍️';
+  if (cat === 'Restaurant') return '🍽️';
+  return '📍';
+}
+
+function customPickChipHTML(cp) {
+  const emoji = customPickEmoji(cp.category);
+  const meta = [cp.category, cp.area, cp.note].filter(Boolean).join(' · ');
+  return `
+    <div class="pick-chip custom" draggable="true" data-id="${cp.id}">
+      <span class="pick-chip-emoji">${emoji}</span>
+      <div class="pick-chip-body">
+        <div class="pick-chip-name">${cp.name}</div>
+        <div class="pick-chip-meta">${meta}</div>
+      </div>
+      <button class="pick-chip-remove" data-action="removeCustom" data-id="${cp.id}" title="Remove">×</button>
+    </div>
+  `;
+}
+
 function renderMyTrip() {
   const picks = Object.entries(state.picks);
-  const total = picks.length;
-  const assigned = picks.filter(([, v]) => v.dayIdx > 0).length;
+  const customArr = Object.values(state.customPicks);
+  const total = picks.length + customArr.length;
+  const assigned = picks.filter(([, v]) => v.dayIdx > 0).length
+                 + customArr.filter(cp => cp.dayIdx > 0).length;
   const needsReserve = picks.filter(([id]) => {
     const e = EXPERIENCES.find(x => x.id === id);
     return e && (e.reserve === 'Yes' || e.reserve === 'Rec');
@@ -1341,7 +1424,7 @@ function renderMyTrip() {
   if (total === 0) {
     root.innerHTML = `
       <div class="empty">
-        No picks yet. Head to <strong>Experiences</strong> and tap "+ Add to my trip" on anything that calls to you.
+        No picks yet. Head to <strong>Experiences</strong> and tap "+ Add to my trip", or use <strong>+ Add custom</strong> above for restaurants and cafés.
       </div>`;
     return;
   }
@@ -1350,7 +1433,10 @@ function renderMyTrip() {
   DAYS.forEach(d => byDay[d.idx] = []);
   picks.forEach(([id, v]) => {
     const e = EXPERIENCES.find(x => x.id === id);
-    if (e) byDay[v.dayIdx || 0].push(e);
+    if (e) byDay[v.dayIdx || 0].push({ type: 'exp', data: e });
+  });
+  customArr.forEach(cp => {
+    byDay[cp.dayIdx || 0].push({ type: 'custom', data: cp });
   });
 
   root.innerHTML = `
@@ -1370,7 +1456,7 @@ function renderMyTrip() {
             <div class="day-picks">
               ${items.length === 0
                 ? `<div class="day-drop-hint">Drop here</div>`
-                : items.map(pickChipHTML).join('')}
+                : items.map(item => item.type === 'exp' ? pickChipHTML(item.data) : customPickChipHTML(item.data)).join('')}
             </div>
           </div>
         `;
@@ -1499,7 +1585,7 @@ function switchTab(name) {
 }
 
 function updatePickCount() {
-  const n = Object.keys(state.picks).length;
+  const n = Object.keys(state.picks).length + Object.keys(state.customPicks).length;
   document.getElementById('pickCount').textContent = n ? n : '';
 }
 
@@ -1507,10 +1593,12 @@ function updatePickCount() {
 
 function openDayPicker(expId) {
   const exp = EXPERIENCES.find(e => e.id === expId);
-  if (!exp) return;
+  const cp = !exp ? state.customPicks[expId] : null;
+  if (!exp && !cp) return;
   state.modalForId = expId;
-  document.getElementById('dayModalTitle').textContent = `Assign "${exp.name}" to:`;
-  const currentDay = state.picks[expId]?.dayIdx ?? 0;
+  const name = exp ? exp.name : cp.name;
+  document.getElementById('dayModalTitle').textContent = `Assign "${name}" to:`;
+  const currentDay = exp ? (state.picks[expId]?.dayIdx ?? 0) : (cp.dayIdx || 0);
   document.getElementById('dayModalBody').innerHTML = DAYS.map(d => `
     <button class="modal-day-btn ${d.idx === currentDay ? 'selected' : ''}"
             data-action="setDay" data-day="${d.idx}">
@@ -1548,12 +1636,21 @@ document.addEventListener('click', (e) => {
       renderExperiences();
       renderMyTrip();
       updatePickCount();
+    } else if (a === 'removeCustom') {
+      delete state.customPicks[id];
+      saveState();
+      renderMyTrip();
+      updatePickCount();
     } else if (a === 'closeModal') {
       closeDayPicker();
     } else if (a === 'setDay') {
       const newDay = parseInt(action.dataset.day, 10);
-      if (state.modalForId && state.picks[state.modalForId]) {
-        state.picks[state.modalForId].dayIdx = newDay;
+      if (state.modalForId) {
+        if (state.picks[state.modalForId]) {
+          state.picks[state.modalForId].dayIdx = newDay;
+        } else if (state.customPicks[state.modalForId]) {
+          state.customPicks[state.modalForId].dayIdx = newDay;
+        }
         saveState();
         renderMyTrip();
       }
@@ -1638,14 +1735,20 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 document.getElementById('exportBtn').addEventListener('click', () => {
   const lines = ['# My Japan Trip — Picks', ''];
   DAYS.forEach(day => {
-    const items = Object.entries(state.picks)
+    const regular = Object.entries(state.picks)
       .filter(([, v]) => (v.dayIdx || 0) === day.idx)
       .map(([id]) => EXPERIENCES.find(e => e.id === id))
       .filter(Boolean);
-    if (items.length === 0) return;
+    const custom = Object.values(state.customPicks)
+      .filter(cp => (cp.dayIdx || 0) === day.idx);
+    if (regular.length === 0 && custom.length === 0) return;
     lines.push(`## ${day.label} — ${day.sub}`);
-    items.forEach(e => {
+    regular.forEach(e => {
       lines.push(`- ${e.name} (${e.area}, Effort ${e.effort}, ${e.exh}, ${e.time}${(e.reserve === 'Yes' || e.reserve === 'Rec') ? ', RESERVE' : ''})`);
+    });
+    custom.forEach(cp => {
+      const meta = [cp.category, cp.area, cp.note].filter(Boolean).join(', ');
+      lines.push(`- ${cp.name}${meta ? ` (${meta})` : ''}`);
     });
     lines.push('');
   });
@@ -1705,6 +1808,10 @@ document.addEventListener('drop', (e) => {
     state.picks[id].dayIdx = newDay;
     saveState();
     renderMyTrip();
+  } else if (id && state.customPicks[id]) {
+    state.customPicks[id].dayIdx = newDay;
+    saveState();
+    renderMyTrip();
   }
 });
 
@@ -1738,11 +1845,71 @@ document.getElementById('newDecisionBody').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') document.getElementById('addDecisionBtn').click();
 });
 
+/* ----------------------------- CUSTOM PICKS MODAL ----------------------------- */
+
+function populateCustomModal() {
+  const areaSel = document.getElementById('cpArea');
+  AREAS.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    areaSel.appendChild(opt);
+  });
+  const daySel = document.getElementById('cpDay');
+  DAYS.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.idx;
+    opt.textContent = d.idx === 0 ? 'Unassigned' : `${d.label} — ${d.sub}`;
+    daySel.appendChild(opt);
+  });
+}
+
+function openCustomModal() {
+  document.getElementById('cpName').value = '';
+  document.getElementById('cpNote').value = '';
+  document.getElementById('cpCategory').value = 'Restaurant';
+  document.getElementById('cpArea').value = '';
+  document.getElementById('cpDay').value = '0';
+  document.getElementById('customPickModal').classList.add('open');
+  document.getElementById('cpName').focus();
+}
+
+function closeCustomModal() {
+  document.getElementById('customPickModal').classList.remove('open');
+}
+
+document.getElementById('addCustomBtn').addEventListener('click', openCustomModal);
+document.getElementById('closeCustomModal').addEventListener('click', closeCustomModal);
+document.getElementById('customPickModal').addEventListener('click', (e) => {
+  if (e.target.id === 'customPickModal') closeCustomModal();
+});
+
+document.getElementById('saveCustomPick').addEventListener('click', () => {
+  const name = document.getElementById('cpName').value.trim();
+  if (!name) { document.getElementById('cpName').focus(); return; }
+  const id = 'custom-' + Date.now().toString(36);
+  state.customPicks[id] = {
+    id,
+    name,
+    category: document.getElementById('cpCategory').value,
+    area: document.getElementById('cpArea').value,
+    note: document.getElementById('cpNote').value.trim(),
+    dayIdx: parseInt(document.getElementById('cpDay').value, 10),
+    addedAt: Date.now(),
+  };
+  saveState();
+  renderMyTrip();
+  closeCustomModal();
+});
+document.getElementById('cpName').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('saveCustomPick').click();
+});
+
 /* ----------------------------- INIT ----------------------------- */
 
 function init() {
   // Render immediately from default state — don't wait for Firebase
   populateAreaSelects();
+  populateCustomModal();
   syncFilterUI();
   setupImageObserver();
   const imgSelect = document.getElementById('imageSource');
